@@ -1,8 +1,8 @@
 /* Månedens Verdensoverblik – virker uden internet.
    HTML/JS hentes friskt når der er net (så månedens opdatering slår igennem), ellers fra gemt kopi.
    Billeder og skrifttyper gemmes og vises fra gemt kopi. */
-const VERSION = "vo-2026-11-v4";
-const CORE = ["./", "index.html", "data.js", "config.js", "stem.html", "img/apec.jpg", "img/benzin.jpg", "img/boenekald.jpg", "img/cop31.jpg", "img/drikkevand.jpg", "img/eksport.jpg", "img/fed.jpg", "img/gaza.jpg", "img/handel.jpg", "img/hormuz.jpg", "img/icc.jpg", "img/israel.jpg", "img/midtvejsvalg.jpg", "img/nojsomhed.jpg", "img/screening.jpg", "img/taliban.jpg", "img/trivsel.jpg", "img/ukraine.jpg", "img/sm/apec.jpg", "img/sm/benzin.jpg", "img/sm/boenekald.jpg", "img/sm/cop31.jpg", "img/sm/drikkevand.jpg", "img/sm/eksport.jpg", "img/sm/fed.jpg", "img/sm/gaza.jpg", "img/sm/handel.jpg", "img/sm/hormuz.jpg", "img/sm/icc.jpg", "img/sm/israel.jpg", "img/sm/midtvejsvalg.jpg", "img/sm/nojsomhed.jpg", "img/sm/screening.jpg", "img/sm/taliban.jpg", "img/sm/trivsel.jpg", "img/sm/ukraine.jpg"];
+const VERSION = "vo-2026-11-v5";
+const CORE = ["./", "index.html", "data.js", "config.js", "stem.html","spoerg.html", "img/apec.jpg", "img/benzin.jpg", "img/boenekald.jpg", "img/cop31.jpg", "img/drikkevand.jpg", "img/eksport.jpg", "img/fed.jpg", "img/gaza.jpg", "img/handel.jpg", "img/hormuz.jpg", "img/icc.jpg", "img/israel.jpg", "img/midtvejsvalg.jpg", "img/nojsomhed.jpg", "img/screening.jpg", "img/taliban.jpg", "img/trivsel.jpg", "img/ukraine.jpg", "img/sm/apec.jpg", "img/sm/benzin.jpg", "img/sm/boenekald.jpg", "img/sm/cop31.jpg", "img/sm/drikkevand.jpg", "img/sm/eksport.jpg", "img/sm/fed.jpg", "img/sm/gaza.jpg", "img/sm/handel.jpg", "img/sm/hormuz.jpg", "img/sm/icc.jpg", "img/sm/israel.jpg", "img/sm/midtvejsvalg.jpg", "img/sm/nojsomhed.jpg", "img/sm/screening.jpg", "img/sm/taliban.jpg", "img/sm/trivsel.jpg", "img/sm/ukraine.jpg"];
 self.addEventListener("install", e=>{
   e.waitUntil(caches.open(VERSION).then(c=>Promise.all(CORE.map(u=>c.add(u).catch(()=>{})))).then(()=>self.skipWaiting()));
 });

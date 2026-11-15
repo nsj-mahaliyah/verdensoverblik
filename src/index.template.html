@@ -389,6 +389,43 @@ body:hover .nav-arrow.show{opacity:.85}
   .crumbs .pill[data-home]{display:none}
   .vt-ctrl{display:none}
 }
+
+/* ── anonyme spørgsmål ── */
+.askmini{pointer-events:auto;display:flex;align-items:center;gap:.6rem;padding:.3rem .8rem .3rem .3rem;border-radius:.9rem;background:rgba(22,28,39,.75);border:1px solid var(--line);color:#C9CED8;font:500 .72rem Inter;text-align:left;cursor:pointer;opacity:.85;transition:opacity .2s}
+.askmini:hover{opacity:1}
+.askmini .aq{width:3.3rem;height:3.3rem;background:#fff;border-radius:.45rem;padding:.2rem;display:block}
+.askmini .aq svg,.ab-qr svg{width:100%;height:100%;display:block}
+.askmini .at b{display:block;color:#fff;font-size:.8rem;font-weight:700}
+.askpill{display:none}
+.qshow{position:fixed;left:50%;bottom:2rem;transform:translate(-50%,140%);width:min(64rem,calc(100% - 4rem));z-index:60;background:rgba(17,22,31,.96);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(212,175,55,.45);border-left:.4rem solid #D4AF37;border-radius:1.4rem;padding:1.5rem 3.6rem 1.6rem 1.8rem;box-shadow:0 1.5rem 4rem rgba(0,0,0,.55);transition:transform .7s cubic-bezier(.2,.9,.2,1)}
+.qshow.on{transform:translate(-50%,0)}
+.qs-k{font-size:.85rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#D4AF37;margin-bottom:.5rem}
+.qshow p{font:700 1.9rem/1.3 Poppins,sans-serif;color:#fff}
+.qs-x{position:absolute;top:.8rem;right:1rem;width:2.4rem;height:2.4rem;border-radius:50%;border:1px solid var(--line);background:transparent;color:#A9B1BE;font-size:1.4rem;cursor:pointer}
+.askbig{position:fixed;inset:0;z-index:80;display:none;place-items:center;background:rgba(14,17,23,.94);cursor:pointer}
+.askbig.on{display:grid}
+.ab-in{display:flex;align-items:center;gap:3rem;max-width:60rem;padding:2rem}
+.ab-qr{width:22rem;height:22rem;flex:none;background:#fff;border-radius:1.4rem;padding:1.2rem}
+.ab-in h2{font:800 3rem/1.05 Poppins,sans-serif;margin:.6rem 0 1rem}
+.ab-in p{font-size:1.35rem;line-height:1.5;color:#C9CED8}
+.ab-hint{display:block;margin-top:1.4rem;color:#6E7684;font-size:.95rem}
+.vt-adm-in a{color:#7FF0BE;font-size:.9rem}
+@media (max-width:700px){
+  .askmini{display:none}
+  .askpill{display:inline-flex}
+  .qshow{bottom:5.6rem;width:calc(100% - 1.6rem);padding:1rem 2.8rem 1.1rem 1.1rem}
+  .qshow p{font-size:1.15rem}
+  .ab-in{flex-direction:column;gap:1.2rem;text-align:center}.ab-qr{width:14rem;height:14rem}.ab-in h2{font-size:2rem}
+}
+
+.askhome{display:flex;align-items:center;gap:1rem;width:100%;padding:.7rem;border-radius:1rem;background:rgba(22,28,39,.7);border:1px solid var(--line);color:#C9CED8;text-align:left;cursor:pointer;font:inherit}
+.askhome:hover{border-color:rgba(212,175,55,.45)}
+.askhome .aq{width:6.2rem;height:6.2rem;flex:none;background:#fff;border-radius:.6rem;padding:.3rem;display:block}
+.askhome .aq svg{width:100%;height:100%;display:block}
+.askhome .at{font-size:.88rem;line-height:1.4}
+.askhome .at b{display:block;color:#fff;font:700 1.05rem Poppins,sans-serif;margin-bottom:.2rem}
+#home .h-head{gap:1.3rem}
+@media (max-width:700px){ .askhome .aq{display:none} }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -399,6 +436,8 @@ body:hover .nav-arrow.show{opacity:.85}
   <span class="sp"></span>
   <button class="pill top5-btn" id="top5Btn" data-top5>Afstemning</button>
   <button class="pill outro-btn" id="outroBtn" data-outro>Månedens hovedpointer ›</button>
+  <button class="askmini" id="askMini" data-askbig title="Stil et anonymt spørgsmål (Q)"><span class="aq">{{QRASK}}</span><span class="at"><b>Spørg anonymt</b>Scan koden</span></button>
+  <a class="pill askpill" href="spoerg.html">Spørg</a>
   <button class="ibtn" id="fs" title="Fuld skærm (F)" aria-label="Fuld skærm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
 </header>
 
@@ -423,6 +462,7 @@ body:hover .nav-arrow.show{opacity:.85}
       <div class="q-row yes"><span>✓</span><p><b>Men</b> for at se begivenhederne ud fra islam – og tage stilling til dem.</p></div>
       <blockquote>„…for at anskue disse begivenheder ud fra den særlige vinkel for at nedfælde den dom over dem, som man kommer frem til.“</blockquote>
       <figcaption>Hizb Ut Tahrirs Politiske Opfattelser, s. 314</figcaption></figure>
+    <button class="askhome" data-askbig aria-label="Stil et anonymt spørgsmål"><span class="aq">{{QRASK}}</span><span class="at"><b>Har du et spørgsmål?</b>Scan koden og spørg anonymt – det vises, hvis det godkendes.</span></button>
   </div>
   <div class="mapwrap" id="mapwrap">{{MAP}}</div>
   </div>
@@ -432,6 +472,8 @@ body:hover .nav-arrow.show{opacity:.85}
 <section class="screen" id="cat" aria-label="Kategori"></section>
 <section class="screen" id="story" aria-label="Sag"></section>
 
+<div class="qshow" id="qshow" aria-live="polite"><div class="qs-k">Spørgsmål fra salen</div><p id="qsText"></p><button class="qs-x" id="qsX" aria-label="Skjul">×</button></div>
+<div class="askbig" id="askBig" role="dialog" aria-label="Stil et anonymt spørgsmål"><div class="ab-in"><div class="ab-qr">{{QRASK}}</div><div><div class="kick">Anonymt</div><h2>Har du et spørgsmål?</h2><p>Scan koden og skriv dit spørgsmål. Det vises på skærmen, hvis det bliver godkendt.</p><span class="ab-hint">Klik eller tryk Q for at lukke</span></div></div></div>
 <div id="pause" aria-hidden="true" title="Klik for at fortsætte"></div>
 
 <nav class="mnav" id="mnav" aria-label="Navigation">
@@ -443,11 +485,11 @@ body:hover .nav-arrow.show{opacity:.85}
 </nav>
 <button class="nav-arrow l" id="prev" aria-label="Forrige"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></button>
 <button class="nav-arrow r" id="next" aria-label="Næste"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
-<div class="keys" id="keys"><kbd>←</kbd><kbd>→</kbd> bladr · <kbd>Esc</kbd> tilbage · <kbd>1–6</kbd> kategori · <kbd>F</kbd> fuld skærm · <kbd>P</kbd> pauseskærm</div>
+<div class="keys" id="keys"><kbd>←</kbd><kbd>→</kbd> bladr · <kbd>Esc</kbd> tilbage · <kbd>1–6</kbd> kategori · <kbd>F</kbd> fuld skærm · <kbd>P</kbd> pauseskærm · <kbd>Q</kbd> spørg</div>
 
-<script src="config.js?v=20261115e"></script>
+<script src="config.js?v=20261115f"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="data.js?v=20261115e"></script>
+<script src="data.js?v=20261115f"></script>
 <script>
 (function(){
 const D = window.VO;
@@ -554,6 +596,7 @@ function renderTop5(){
             <input id="vtCode" type="password" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="••••">
             <div class="vt-adm-b"><button data-vstop>Stop afstemning</button><button class="danger" data-vreset>Nulstil alle svar</button></div>
             <div class="vt-adm-msg" id="vtAdmMsg" role="status"></div>
+            <a href="admin.html" target="_blank" rel="noopener">Åbn spørgsmål og styring på telefonen ↗</a>
           </div>
         </details>
       </div>
@@ -789,6 +832,7 @@ document.addEventListener("click", e=>{
   if(e.target.closest("[data-home]")){ go("overblik"); return; }
   if(e.target.closest("[data-outro]")){ go("afslutning"); return; }
   const ms=e.target.closest("[data-mstep]"); if(ms){ step(+ms.dataset.mstep); return; }
+  if(e.target.closest("[data-askbig]")){ if(innerWidth<=700){ location.href="spoerg.html"; } else askBig(true); return; }
   if(e.target.closest("[data-top5]")){ go("afstemning"); return; }
   if(e.target.closest("[data-vstart]")){ admCall("vo_start"); return; }
   if(e.target.closest("[data-vstop]")){ admCall("vo_stop"); return; }
@@ -819,6 +863,33 @@ document.addEventListener("keydown", e=>{
   else if((e.key==="Enter"||e.key===" ") && e.target.matches(".mk")){ e.preventDefault(); go(e.target.dataset.go); }
 });
 window.addEventListener("hashchange", route);
+/*Q*/
+/* ── anonyme spørgsmål: vis godkendt spørgsmål på storskærmen ── */
+let qsId = null, qsHidden = null, qsb = null;
+function getSb(){ if(!qsb && CFG.supabaseUrl && CFG.supabaseAnonKey && window.supabase){ qsb = (typeof sb!=="undefined" && sb) || window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey); } return qsb; }
+async function syncQuestion(){
+  const c = getSb(); if(!c) return;
+  const { data } = await c.from("vo_state").select("shown_q").eq("poll", POLL).maybeSingle();
+  const id = data && data.shown_q || null;
+  if(id === qsId) return;
+  qsId = id;
+  if(!id){ $("#qshow").classList.remove("on"); return; }
+  const { data: q } = await c.from("vo_questions").select("id,text").eq("id", id).maybeSingle();
+  if(!q){ $("#qshow").classList.remove("on"); return; }
+  $("#qsText").textContent = q.text;
+  if(qsHidden !== id){ $("#qshow").classList.remove("on"); void $("#qshow").offsetWidth; $("#qshow").classList.add("on"); }
+}
+$("#qsX").addEventListener("click", e=>{ e.stopPropagation(); qsHidden = qsId; $("#qshow").classList.remove("on"); });
+function askBig(on){ $("#askBig").classList.toggle("on", on===undefined ? !$("#askBig").classList.contains("on") : on); }
+$("#askBig").addEventListener("click", e=>{ e.stopPropagation(); askBig(false); });
+document.addEventListener("keydown", e=>{ if(e.target.matches("input,textarea")) return; if(e.key==="q"||e.key==="Q"){ e.stopImmediatePropagation(); askBig(); } }, true);
+setTimeout(()=>{
+  const c = getSb(); if(!c) return;
+  syncQuestion();
+  c.channel("q-"+POLL).on("postgres_changes",{event:"*",schema:"public",table:"vo_state",filter:"poll=eq."+POLL}, ()=>syncQuestion()).subscribe();
+  setInterval(syncQuestion, 3000);
+}, 800);
+
 if("serviceWorker" in navigator && location.protocol==="https:"){ navigator.serviceWorker.register((window.VO_SW||"sw.js")).catch(()=>{}); }
 /* ── pauseskærm: månedens skarpeste spørgsmål, når siden står stille ── */
 const PS_IDLE = 45000, PS_SLIDE = 12000;

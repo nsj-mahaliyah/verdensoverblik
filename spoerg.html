@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0E1117">
+<title>Stil et spørgsmål – Månedens Verdensoverblik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0E1117;color:#fff;font-family:Inter,system-ui,sans-serif;min-height:100vh;padding:max(1.4rem,env(safe-area-inset-top)) 1.1rem 2rem}
+.wrap{max-width:30rem;margin:0 auto;display:flex;flex-direction:column;gap:1rem}
+.kick{font-size:.75rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#D4AF37}
+h1{font:800 1.75rem/1.1 Poppins,sans-serif}
+.sub{color:#A9B1BE;font-size:.95rem;line-height:1.5}
+.lock{display:flex;gap:.6rem;align-items:flex-start;padding:.8rem .9rem;border-radius:.9rem;background:rgba(31,169,113,.1);border:1px solid rgba(31,169,113,.3);color:#BFF5DC;font-size:.88rem;line-height:1.45}
+.lock svg{flex:none;width:1.2rem;height:1.2rem;margin-top:.1rem}
+label{font-size:.8rem;color:#A9B1BE;letter-spacing:.1em;text-transform:uppercase}
+textarea{width:100%;min-height:9rem;padding:1rem;border-radius:1rem;border:1.5px solid rgba(255,255,255,.14);background:#161B24;color:#fff;font:500 1.05rem/1.45 Inter,sans-serif;resize:vertical}
+textarea:focus{outline:none;border-color:#1FA971}
+.row{display:flex;justify-content:space-between;align-items:center;color:#8B93A1;font-size:.8rem}
+button{min-height:3.4rem;border:0;border-radius:1rem;background:#1FA971;color:#fff;font:700 1.05rem Inter,sans-serif;cursor:pointer}
+button:disabled{opacity:.45}
+.msg{padding:.9rem 1rem;border-radius:.9rem;font-size:.95rem;line-height:1.45;display:none}
+.msg.ok{display:block;background:rgba(31,169,113,.15);color:#7FF0BE;border:1px solid rgba(31,169,113,.4)}
+.msg.err{display:block;background:rgba(229,72,77,.12);color:#FF9A9E;border:1px solid rgba(229,72,77,.4)}
+.foot{color:#6E7684;font-size:.8rem;text-align:center;margin-top:.5rem}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="kick" id="month">Spørg anonymt</div>
+  <h1>Stil et spørgsmål</h1>
+  <p class="sub">Har du et spørgsmål til en af sagerne? Skriv det her – taleren ser det, og hvis det bliver godkendt, vises det på skærmen.</p>
+  <div class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>Helt anonymt. Dit navn eller nummer gemmes ikke.</span></div>
+  <label for="q">Dit spørgsmål</label>
+  <textarea id="q" maxlength="300" placeholder="Fx: Hvad kan muslimer i Danmark konkret gøre ved …"></textarea>
+  <div class="row"><span id="cnt">0 / 300</span><span>Ét spørgsmål ad gangen</span></div>
+  <button id="send" disabled>Send spørgsmål</button>
+  <div class="msg" id="msg" role="status" aria-live="polite"></div>
+  <p class="foot">Månedens Verdensoverblik</p>
+</main>
+<script src="config.js?v=20261115f"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="data.js?v=20261115f"></script>
+<script>
+(function(){
+const D=window.VO, CFG=window.VO_CONFIG||{}, POLL=D.pollId||D.month;
+const $=s=>document.querySelector(s);
+$("#month").textContent=D.month+" · Spørg anonymt";
+let dev; try{ dev=localStorage.getItem("vo-device"); if(!dev){ dev=(crypto.randomUUID?crypto.randomUUID():String(Math.random()).slice(2)+Date.now()); localStorage.setItem("vo-device",dev);} }catch(e){ dev="x"+Math.random()+Date.now(); }
+const q=$("#q"), btn=$("#send");
+function msg(t,c){ const m=$("#msg"); m.textContent=t; m.className="msg "+c; }
+q.addEventListener("input",()=>{ const n=q.value.trim().length; $("#cnt").textContent=q.value.length+" / 300"; btn.disabled=n<3; });
+if(!CFG.supabaseUrl||!window.supabase){ msg("Spørgsmål er ikke åbnet endnu.","err"); btn.disabled=true; return; }
+const sb=window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey);
+btn.addEventListener("click",async()=>{
+  btn.disabled=true; btn.textContent="Sender …";
+  const {error}=await sb.rpc("vo_ask",{p_poll:POLL,p_text:q.value,p_device:dev});
+  btn.textContent="Send spørgsmål";
+  if(error){ msg(error.code==="54000"?"Du har sendt flere spørgsmål for nylig – vent et par minutter.":"Det lykkedes ikke at sende – prøv igen.","err"); btn.disabled=false; return; }
+  q.value=""; $("#cnt").textContent="0 / 300";
+  msg("Tak! Dit spørgsmål er sendt til taleren. Det vises på skærmen, hvis det bliver godkendt.","ok");
+});
+})();
+</script>
+</body>
+</html>

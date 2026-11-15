@@ -21,3 +21,4 @@ Billeder: img/*.jpg = HD 2560×1600 (q82) til one-pager og hovedkort; img/sm/*.j
 - Arkiv: før en ny måned lægges ind, kopieres den nuværende til arkiv/<pollId>/ (index.html med ../../config.js og VO_SW="../../sw.js", data.js og img/), og der tilføjes en linje i arkiv/maaneder.js.
 - Styring: "Start afstemning" (ingen kode) og "Styring ▾" med kode til Stop / Nulstil alle svar. Når åben opdateres tallene hvert sekund. Kontrollerne er skjult på mobil. Koden skiftes i Supabase (se supabase/opsaetning.sql).
 - Mobil: bundmenu (‹ Overblik · Stem · Pointer ›).
+- Anonyme spørgsmål: spoerg.html (telefon, via lille QR øverst til højre eller tast Q for stor QR). admin.html = styring (kode): godkend/afvis spørgsmål med lyd + notifikation, vis/skjul på storskærm, start/stop/nulstil afstemning. QR til spoerg.html: src/qr_spoerg.svg ({{QRASK}} i skabelonen).

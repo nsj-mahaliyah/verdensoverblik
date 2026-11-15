@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0E1117">
+<meta name="robots" content="noindex">
+<title>Styring – Månedens Verdensoverblik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0E1117;color:#fff;font-family:Inter,system-ui,sans-serif;min-height:100vh;padding:max(1.2rem,env(safe-area-inset-top)) 1rem 3rem}
+.wrap{max-width:46rem;margin:0 auto;display:flex;flex-direction:column;gap:1.2rem}
+.kick{font-size:.75rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#D4AF37}
+h1{font:800 1.8rem/1.1 Poppins,sans-serif}
+h2{font:700 1.1rem Poppins,sans-serif;display:flex;align-items:center;gap:.6rem}
+h2 .n{min-width:1.6rem;height:1.6rem;padding:0 .45rem;border-radius:1rem;background:#E5484D;color:#fff;font:700 .85rem Inter;display:inline-grid;place-items:center}
+h2 .n.zero{background:rgba(255,255,255,.1);color:#8B93A1}
+.card{background:#161B24;border:1px solid rgba(255,255,255,.09);border-radius:1.1rem;padding:1rem;display:flex;flex-direction:column;gap:.8rem}
+input{padding:.85rem 1rem;border-radius:.8rem;border:1.5px solid rgba(255,255,255,.16);background:#0E1117;color:#fff;font:600 1.2rem Inter;letter-spacing:.3em;width:100%}
+button{min-height:2.9rem;padding:0 1rem;border-radius:.8rem;border:1px solid rgba(255,255,255,.16);background:transparent;color:#fff;font:600 .95rem Inter;cursor:pointer}
+button.pri{background:#1FA971;border-color:#1FA971}
+button.dng{border-color:rgba(229,72,77,.5);color:#FF9A9E}
+button.gold{border-color:rgba(212,175,55,.55);color:#F1D27A}
+.btns{display:flex;gap:.5rem;flex-wrap:wrap}
+.q{border-radius:.9rem;padding:.9rem 1rem;background:#0F141C;border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:.6rem}
+.q.new{border-color:rgba(229,72,77,.55);box-shadow:0 0 0 1px rgba(229,72,77,.25)}
+.q.live{border-color:#1FA971;box-shadow:0 0 0 1px #1FA971}
+.q p{font-size:1.05rem;line-height:1.45}
+.q small{color:#8B93A1;font-size:.78rem}
+.empty{color:#6E7684;font-size:.9rem}
+.status{display:flex;align-items:center;gap:.6rem;font-size:.95rem}
+.dot{width:.7rem;height:.7rem;border-radius:50%;background:#6E7684}.dot.on{background:#1FA971;box-shadow:0 0 0 .3rem rgba(31,169,113,.2)}
+.err{color:#FF9A9E;font-size:.9rem;min-height:1.2em}
+details summary{cursor:pointer;color:#A9B1BE;font-size:.9rem;padding:.3rem 0}
+.hide{display:none!important}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:1rem}
+a{color:#7FF0BE}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="top"><div><div class="kick" id="month">Styring</div><h1>Styring</h1></div><a href="./#afstemning" target="_blank" rel="noopener">Åbn storskærm ↗</a></div>
+
+  <section class="card" id="login">
+    <h2>Log ind</h2>
+    <input id="code" type="password" inputmode="numeric" autocomplete="off" placeholder="Kode">
+    <button class="pri" id="loginBtn">Log ind og slå notifikationer til</button>
+    <div class="err" id="loginErr"></div>
+  </section>
+
+  <div id="app" class="hide" style="display:flex;flex-direction:column;gap:1.2rem">
+    <section class="card">
+      <h2>Nye spørgsmål <span class="n zero" id="nNew">0</span></h2>
+      <div id="new"></div>
+    </section>
+    <section class="card">
+      <h2>På skærmen nu</h2>
+      <div id="live"></div>
+    </section>
+    <section class="card">
+      <h2>Afstemning</h2>
+      <div class="status"><span class="dot" id="vDot"></span><span id="vTxt">–</span></div>
+      <div class="btns"><button class="pri" id="vStart">Start</button><button id="vStop">Stop</button><button class="dng" id="vReset">Nulstil alle svar</button></div>
+    </section>
+    <section class="card">
+      <h2>Godkendte spørgsmål</h2>
+      <div id="ok"></div>
+      <details><summary>Afviste spørgsmål</summary><div id="no" style="margin-top:.6rem;display:flex;flex-direction:column;gap:.6rem"></div></details>
+    </section>
+    <div class="err" id="err"></div>
+  </div>
+</main>
+<script src="config.js?v=20261115f"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="data.js?v=20261115f"></script>
+<script>
+(function(){
+const D=window.VO, CFG=window.VO_CONFIG||{}, POLL=D.pollId||D.month;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+$("#month").textContent=D.month+" · Admin";
+if(!CFG.supabaseUrl||!window.supabase){ $("#loginErr").textContent="Supabase er ikke sat op."; return; }
+const sb=window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey);
+let code=null, list=[], st={open:false,round:1,shown_q:null}, seen=new Set(), first=true, ac=null;
+try{ code=sessionStorage.getItem("vo-admin"); }catch(e){}
+const tm=d=>new Date(d).toLocaleTimeString("da-DK",{hour:"2-digit",minute:"2-digit"});
+
+function beep(){ try{ ac=ac||new (window.AudioContext||window.webkitAudioContext)(); [0,0.18].forEach(dt=>{ const o=ac.createOscillator(),g=ac.createGain(); o.frequency.value=880; o.connect(g); g.connect(ac.destination); g.gain.setValueAtTime(.0001,ac.currentTime+dt); g.gain.exponentialRampToValueAtTime(.25,ac.currentTime+dt+.02); g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+dt+.15); o.start(ac.currentTime+dt); o.stop(ac.currentTime+dt+.16); }); }catch(e){} }
+function notify(q){
+  beep(); try{ navigator.vibrate&&navigator.vibrate([150,80,150]); }catch(e){}
+  try{ if("Notification" in window && Notification.permission==="granted"){ const n=new Notification("Nyt spørgsmål",{body:q.text,tag:"vo-q-"+q.id}); n.onclick=()=>{window.focus();n.close();}; } }catch(e){}
+}
+
+async function login(c){
+  const {data,error}=await sb.rpc("vo_q_list",{p_poll:POLL,p_code:c});
+  if(error){ $("#loginErr").textContent = error.code==="28000" ? "Forkert kode" : "Kunne ikke logge ind"; return false; }
+  code=c; try{ sessionStorage.setItem("vo-admin",c); }catch(e){}
+  $("#login").classList.add("hide"); $("#app").classList.remove("hide");
+  list=data||[]; list.forEach(q=>seen.add(q.id)); first=false; await loadState(); render();
+  return true;
+}
+$("#loginBtn").onclick=async()=>{
+  try{ ac=ac||new (window.AudioContext||window.webkitAudioContext)(); ac.resume&&ac.resume(); }catch(e){}
+  try{ if("Notification" in window && Notification.permission==="default") await Notification.requestPermission(); }catch(e){}
+  $("#loginErr").textContent="Tjekker …"; await login($("#code").value.trim());
+};
+$("#code").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#loginBtn").click(); });
+
+async function loadState(){
+  const {data}=await sb.from("vo_state").select("open,round,shown_q").eq("poll",POLL).maybeSingle();
+  st=data||{open:false,round:1,shown_q:null};
+}
+async function refresh(){
+  if(!code) return;
+  const {data,error}=await sb.rpc("vo_q_list",{p_poll:POLL,p_code:code});
+  if(error) return;
+  const fresh=(data||[]).filter(q=>q.status==="afventer" && !seen.has(q.id));
+  fresh.forEach(q=>seen.add(q.id));
+  list=data||[]; await loadState(); render();
+  if(fresh.length) notify(fresh[0]);
+}
+function qCard(q,kind){
+  const live = st.shown_q===q.id;
+  let b="";
+  if(kind==="new") b=`<button class="pri" data-a="ok" data-id="${q.id}">Godkend og vis</button><button class="dng" data-a="no" data-id="${q.id}">Afvis</button>`;
+  if(kind==="ok") b= live ? `<button data-a="hide">Skjul fra skærm</button>` : `<button class="gold" data-a="show" data-id="${q.id}">Vis på skærm</button><button class="dng" data-a="no" data-id="${q.id}">Afvis</button>`;
+  if(kind==="no") b=`<button data-a="back" data-id="${q.id}">Fortryd</button>`;
+  return `<div class="q ${kind==="new"?"new":""} ${live?"live":""}"><p>${esc(q.text)}</p><small>${tm(q.created_at)}${live?" · vises på skærmen":""}</small><div class="btns">${b}</div></div>`;
+}
+function render(){
+  const nw=list.filter(q=>q.status==="afventer").sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
+  const ok=list.filter(q=>q.status==="godkendt"), no=list.filter(q=>q.status==="afvist");
+  $("#nNew").textContent=nw.length; $("#nNew").classList.toggle("zero",!nw.length);
+  document.title=(nw.length?`(${nw.length}) `:"")+"Styring – Verdensoverblik";
+  $("#new").innerHTML = nw.length ? nw.map(q=>qCard(q,"new")).join("") : '<p class="empty">Ingen nye spørgsmål. Du får en lyd og en notifikation, når der kommer et.</p>';
+  const lv=list.find(q=>q.id===st.shown_q);
+  $("#live").innerHTML = lv ? qCard(lv,"ok") : '<p class="empty">Intet spørgsmål på skærmen.</p>';
+  $("#ok").innerHTML = ok.length ? ok.map(q=>qCard(q,"ok")).join("") : '<p class="empty">Ingen godkendte endnu.</p>';
+  $("#no").innerHTML = no.length ? no.map(q=>qCard(q,"no")).join("") : '<p class="empty">Ingen.</p>';
+  $("#vDot").classList.toggle("on",!!st.open); $("#vTxt").textContent = st.open ? "Åben – folk kan stemme" : "Lukket";
+}
+async function act(fn,args,okMsg){
+  $("#err").textContent="";
+  const {error}=await sb.rpc(fn,Object.assign({p_code:code},args));
+  if(error){ $("#err").textContent = error.code==="28000" ? "Koden er ikke længere gyldig – log ind igen" : "Det lykkedes ikke – prøv igen"; return; }
+  await refresh();
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-a]"); if(!b) return; const id=+b.dataset.id||null;
+  if(b.dataset.a==="ok") act("vo_q_decide",{p_id:id,p_status:"godkendt"});
+  if(b.dataset.a==="no") act("vo_q_decide",{p_id:id,p_status:"afvist"});
+  if(b.dataset.a==="back") act("vo_q_decide",{p_id:id,p_status:"afventer"});
+  if(b.dataset.a==="show") act("vo_q_show",{p_poll:POLL,p_id:id});
+  if(b.dataset.a==="hide") act("vo_q_show",{p_poll:POLL,p_id:null});
+});
+$("#vStart").onclick=async()=>{ await sb.rpc("vo_start",{p_poll:POLL}); await loadState(); render(); };
+$("#vStop").onclick=()=>act("vo_stop",{p_poll:POLL});
+$("#vReset").onclick=()=>{ if(confirm("Nulstil alle svar? Alle kan derefter stemme igen.")) act("vo_reset",{p_poll:POLL}); };
+
+sb.channel("adm-"+POLL)
+  .on("postgres_changes",{event:"*",schema:"public",table:"vo_state",filter:"poll=eq."+POLL},()=>{ loadState().then(render); })
+  .subscribe();
+setInterval(refresh,3000);
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden) refresh(); });
+if(code){ login(code); }
+})();
+</script>
+</body>
+</html>
