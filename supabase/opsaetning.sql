@@ -1,5 +1,5 @@
 -- Månedens Verdensoverblik – live-afstemning
--- Kør én gang i Supabase → SQL Editor → New query → Run
+-- ALLEREDE KØRT i projektet NSJMahaliyah (15.11.2026) – gemt her som dokumentation.
 
 create table if not exists public.votes (
   id         bigserial primary key,
@@ -18,7 +18,8 @@ create policy "laes stemmer" on public.votes for select to anon, authenticated u
 
 -- Alle må afgive en stemme – men ikke ændre eller slette
 drop policy if exists "afgiv stemme" on public.votes;
-create policy "afgiv stemme" on public.votes for insert to anon, authenticated with check (true);
+create policy "afgiv stemme" on public.votes for insert to anon, authenticated
+  with check (poll ~ '^[0-9]{4}-[0-9]{2}$' and story ~ '^[a-z0-9-]+$');
 
 -- Live-opdatering på storskærmen
 alter publication supabase_realtime add table public.votes;
