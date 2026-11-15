@@ -22,3 +22,4 @@ Billeder: img/*.jpg = HD 2560×1600 (q82) til one-pager og hovedkort; img/sm/*.j
 - Styring: "Start afstemning" (ingen kode) og "Styring ▾" med kode til Stop / Nulstil alle svar. Når åben opdateres tallene hvert sekund. Kontrollerne er skjult på mobil. Koden skiftes i Supabase (se supabase/opsaetning.sql).
 - Mobil: bundmenu (‹ Overblik · Stem · Pointer ›).
 - Anonyme spørgsmål: spoerg.html (telefon, via lille QR øverst til højre eller tast Q for stor QR). admin.html = styring (kode): godkend/afvis spørgsmål med lyd + notifikation, vis/skjul på storskærm, start/stop/nulstil afstemning. QR til spoerg.html: src/qr_spoerg.svg ({{QRASK}} i skabelonen).
+- Sceneskift: titelkort i 1,3 sek. når der bladres fra sag til sag. B = sort skærm (en vilkårlig tast/klik vender tilbage). Admin: "Slet alle spørgsmål".

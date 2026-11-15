@@ -40,3 +40,4 @@ alter publication supabase_realtime add table public.votes;
 -- vo_state.shown_q = spørgsmålet der vises på storskærmen.
 -- RPC: vo_ask(p_poll, p_text, p_device)  (maks 3 pr. telefon pr. 10 min)
 --      vo_q_list(p_poll, p_code) · vo_q_decide(p_id, p_status, p_code) · vo_q_show(p_poll, p_id|null, p_code)
+-- vo_q_reset(p_poll, p_code): sletter alle spørgsmål for måneden og fjerner spørgsmålet fra skærmen. vo_reset rydder nu også shown_q.

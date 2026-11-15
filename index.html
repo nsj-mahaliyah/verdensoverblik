@@ -44,7 +44,7 @@ h1,h2,h3,.p{font-family:Poppins,Inter,sans-serif;letter-spacing:-.015em}
 #home{display:none;grid-template-rows:1fr auto;gap:1rem}
 .h-main{display:grid;grid-template-columns:25.5rem 1fr;gap:1rem;min-height:0}
 #home.on,#home.out{display:grid}
-.h-head{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:2rem}
+.h-head{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:2rem;min-height:0;overflow:hidden}
 .kick{font-size:.95rem;font-weight:700;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;display:flex;align-items:center;gap:.6rem}
 .kick::before{content:"";width:.55rem;height:.55rem;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(31,169,113,.6);animation:pulse 2s infinite}
 @keyframes pulse{70%{box-shadow:0 0 0 .7rem rgba(31,169,113,0)}100%{box-shadow:0 0 0 0 rgba(31,169,113,0)}}
@@ -428,6 +428,27 @@ body:hover .nav-arrow.show{opacity:.85}
 .askhome .at b{display:block;color:#fff;font:700 1.05rem Poppins,sans-serif;margin-bottom:.2rem}
 #home .h-head{gap:1.3rem}
 @media (max-width:700px){ .askhome .aq{display:none} }
+
+#home.tight .quote blockquote,#home.tight .quote figcaption{display:none}
+#home.tight .h-head h1{font-size:2.7rem}
+#home.tight .h-head{gap:.9rem}
+#home.tighter .askhome{display:none}
+#home.tighter .q-row p{font-size:.95rem}
+
+/* ── sceneskift ── */
+.scene{position:fixed;inset:0;z-index:70;display:grid;place-items:center;background:radial-gradient(60% 60% at 50% 50%,color-mix(in srgb,var(--sc,#1FA971) 18%,#0E1117),#0E1117 75%);opacity:0;pointer-events:none;transition:opacity .25s ease}
+.scene.on{opacity:1}
+.sc-in{text-align:center;max-width:64rem;padding:2rem;transform:translateY(.8rem);transition:transform .5s cubic-bezier(.2,.9,.2,1)}
+.scene.on .sc-in{transform:none}
+.sc-tag{display:inline-flex;align-items:center;gap:.6rem;padding:.45rem 1.1rem;border-radius:2rem;background:var(--sc,#1FA971);color:#0E1117;font:800 1rem Inter;letter-spacing:.18em;text-transform:uppercase}
+.sc-tag .flag{width:1.4em;height:1em}
+.sc-t{margin-top:1.4rem;font:800 4rem/1.08 Poppins,sans-serif;color:#fff}
+/* ── tavs skærm ── */
+.blank{position:fixed;inset:0;z-index:95;background:#05070A;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .6s ease;cursor:pointer}
+.blank.on{opacity:1;pointer-events:auto}
+.bl-logo{display:flex;align-items:center;gap:1rem;opacity:.35;font:700 1.3rem Poppins,sans-serif;color:#fff}
+.bl-logo i{width:3.2rem;height:3.2rem;border-radius:1rem;background:linear-gradient(135deg,var(--green),#0d6b47);display:grid;place-items:center}
+@media (max-width:700px){ .scene{display:none} }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -479,6 +500,8 @@ body:hover .nav-arrow.show{opacity:.85}
 <div class="qshow" id="qshow" aria-live="polite"><div class="qs-k">Spørgsmål fra salen</div><p id="qsText"></p><button class="qs-x" id="qsX" aria-label="Skjul spørgsmålet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
 <div class="askbig" id="askBig" role="dialog" aria-label="Stil et anonymt spørgsmål"><div class="ab-in"><div class="ab-qr"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 33" shape-rendering="crispEdges"><path fill="#FFFFFF" d="M0 0h33v33H0z"/><path stroke="#0E1117" d="M0 0.5h7m2 0h4m3 0h1m1 0h2m3 0h1m2 0h7M0 1.5h1m5 0h1m3 0h2m3 0h1m1 0h2m2 0h2m3 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h1m2 0h1m2 0h1m1 0h1m1 0h1m2 0h1m4 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h1m1 0h3m4 0h1m1 0h2m1 0h3m1 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h2m1 0h11m1 0h1m2 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m1 0h4m5 0h1m2 0h2m2 0h1m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h1m1 0h2m2 0h1m1 0h1m1 0h1m1 0h5M0 8.5h1m1 0h5m2 0h6m2 0h1m4 0h1m1 0h1m1 0h5M0 9.5h2m5 0h2m1 0h1m2 0h1m4 0h3m2 0h1m2 0h2m1 0h2m1 0h1M0 10.5h2m2 0h1m1 0h1m1 0h3m2 0h3m1 0h1m2 0h2m6 0h1m1 0h2M3 11.5h2m3 0h2m3 0h1m7 0h2m2 0h2m1 0h3m1 0h1M1 12.5h2m1 0h1m1 0h1m1 0h2m2 0h1m1 0h2m1 0h2m3 0h4m2 0h2m1 0h1M0 13.5h1m4 0h1m3 0h1m2 0h2m1 0h1m2 0h3m2 0h1m2 0h1m2 0h4M1 14.5h9m1 0h1m1 0h1m1 0h1m1 0h1m2 0h2m2 0h8M0 15.5h1m2 0h2m2 0h1m2 0h1m1 0h2m1 0h2m2 0h3m1 0h4m1 0h3M4 16.5h6m1 0h1m2 0h1m2 0h1m1 0h1m2 0h1m1 0h2m1 0h3m2 0h1M0 17.5h1m2 0h3m2 0h3m1 0h1m3 0h5m2 0h2m1 0h2m1 0h4M2 18.5h5m4 0h1m3 0h3m2 0h1m3 0h5m1 0h2M0 19.5h5m2 0h1m1 0h2m4 0h2m1 0h1m2 0h12M1 20.5h2m1 0h1m1 0h1m1 0h1m1 0h1m2 0h3m1 0h1m1 0h1m3 0h1m1 0h1m1 0h3m1 0h2M0 21.5h1m1 0h4m1 0h1m1 0h1m1 0h2m1 0h1m1 0h6m1 0h1m1 0h2m3 0h1m1 0h1M0 22.5h1m1 0h3m1 0h7m2 0h2m1 0h1m2 0h1m3 0h2m4 0h1M0 23.5h1m6 0h3m1 0h1m3 0h2m4 0h2m3 0h1m2 0h4M0 24.5h1m1 0h1m1 0h3m1 0h3m1 0h1m3 0h2m2 0h1m1 0h1m1 0h5m3 0h1M8 25.5h1m3 0h1m3 0h2m1 0h2m3 0h1m3 0h1m1 0h1m1 0h1M0 26.5h7m2 0h1m2 0h2m1 0h1m2 0h1m1 0h1m1 0h3m1 0h1m1 0h1m1 0h1M0 27.5h1m5 0h1m1 0h1m1 0h1m3 0h2m2 0h1m2 0h4m3 0h5M0 28.5h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h2m2 0h1m1 0h2m1 0h1m1 0h6m1 0h2M0 29.5h1m1 0h3m1 0h1m1 0h2m1 0h1m1 0h2m1 0h1m2 0h2m1 0h2m1 0h1m2 0h5M0 30.5h1m1 0h3m1 0h1m1 0h3m1 0h2m1 0h1m4 0h3m1 0h4m2 0h1M0 31.5h1m5 0h1m2 0h3m1 0h1m1 0h2m1 0h2m1 0h1m3 0h1m2 0h3M0 32.5h7m1 0h2m2 0h2m1 0h1m1 0h1m4 0h3m1 0h2m3 0h1"/></svg>
 </div><div><div class="kick">Anonymt</div><h2>Har du et spørgsmål?</h2><p>Scan koden og skriv dit spørgsmål. Det vises på skærmen, hvis det bliver godkendt.</p><span class="ab-hint">Klik eller tryk Q for at lukke</span></div></div></div>
+<div class="scene" id="scene" aria-hidden="true"><div class="sc-in"><span class="sc-tag" id="scTag"></span><div class="sc-t" id="scT"></div></div></div>
+<div class="blank" id="blank" aria-hidden="true"><div class="bl-logo"><i><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></i><span>Månedens Verdensoverblik</span></div></div>
 <div id="pause" aria-hidden="true" title="Klik for at fortsætte"></div>
 
 <nav class="mnav" id="mnav" aria-label="Navigation">
@@ -490,7 +513,7 @@ body:hover .nav-arrow.show{opacity:.85}
 </nav>
 <button class="nav-arrow l" id="prev" aria-label="Forrige"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></button>
 <button class="nav-arrow r" id="next" aria-label="Næste"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
-<div class="keys" id="keys"><kbd>←</kbd><kbd>→</kbd> bladr · <kbd>Esc</kbd> tilbage · <kbd>1–6</kbd> kategori · <kbd>F</kbd> fuld skærm · <kbd>P</kbd> pauseskærm · <kbd>Q</kbd> spørg</div>
+<div class="keys" id="keys"><kbd>←</kbd><kbd>→</kbd> bladr · <kbd>Esc</kbd> tilbage · <kbd>1–6</kbd> kategori · <kbd>F</kbd> fuld skærm · <kbd>P</kbd> pauseskærm · <kbd>Q</kbd> spørg · <kbd>B</kbd> sort skærm</div>
 
 <script src="config.js?v=20261115f"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -777,7 +800,7 @@ function show(view, id){
   if(view==="outro") renderOutro();
   if(view==="top5") renderTop5(); else { clearInterval(tick); tick=null; }
   if(view==="cat") renderCat(id);
-  if(view==="story"){ renderStory(id); requestAnimationFrame(placePins); }
+  if(view==="story"){ renderStory(id); requestAnimationFrame(placePins); if(id!==lastStory && cur && cur.view==="story") sceneCard(byId[id]); lastStory=id; } else { lastStory=null; }
   if(view==="home"||view==="intro"||view==="outro"||view==="top5") document.documentElement.style.setProperty("--c","#1FA971");
   $(".top").classList.toggle("hide", view==="intro");
   $("#outroBtn").style.display = view==="home"?"":"none";
@@ -787,7 +810,7 @@ function show(view, id){
     else if(s.classList.contains("on")){ s.classList.remove("on"); s.classList.add("out"); setTimeout(()=>s.classList.remove("out"),300); }
   });
   $("#mapwrap").classList.remove("zoom"); $("#mapwrap svg").style.transform="";
-  cur = {view,id}; crumbs(); document.querySelectorAll("#mnav [data-mv]").forEach(b=>b.classList.toggle("on", b.dataset.mv===(view==="cat"||view==="story"?"home":view)));
+  cur = {view,id}; crumbs(); if(view==="home") requestAnimationFrame(fitHome); document.querySelectorAll("#mnav [data-mv]").forEach(b=>b.classList.toggle("on", b.dataset.mv===(view==="cat"||view==="story"?"home":view)));
   document.querySelectorAll("#mnav [data-mstep]").forEach(b=>b.disabled = !(view==="cat"||view==="story")); $("#keys").style.opacity = view==="home"?.7:0;
 }
 function route(){
@@ -870,8 +893,35 @@ document.addEventListener("keydown", e=>{
 });
 window.addEventListener("hashchange", route);
 /*Q*/
+/* sceneskift: kort titelkort når taleren skifter sag */
+let lastStory = null, scT = null;
+function sceneCard(s){
+  if(innerWidth<=700 || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) return;
+  const c = catBy[s.cat]; const el = $("#scene");
+  el.style.setProperty("--sc", c.c);
+  $("#scTag").innerHTML = `${c.ic} ${esc(c.name)}`; $("#scT").textContent = s.title;
+  clearTimeout(scT); el.classList.add("on"); scT = setTimeout(()=>el.classList.remove("on"), 1300);
+}
+/* tavs skærm: B slår til/fra */
+function blank(on){ const b=$("#blank"); b.classList.toggle("on", on===undefined ? !b.classList.contains("on") : on); }
+$("#blank").addEventListener("click", e=>{ e.stopPropagation(); blank(false); });
+document.addEventListener("keydown", e=>{
+  if(e.target.matches("input,textarea")) return;
+  if($("#blank").classList.contains("on")){ e.preventDefault(); e.stopImmediatePropagation(); blank(false); return; }
+  if(e.key==="b"||e.key==="B"){ e.preventDefault(); e.stopImmediatePropagation(); blank(true); }
+}, true);
+
+/* forsiden: undgå at venstre kolonne glider ind under fliserne i brede/lave vinduer */
+function fitHome(){
+  const h=$("#home"); if(!h || innerWidth<=700) return;
+  h.classList.remove("tight","tighter");
+  const over=()=>{ const hd=h.querySelector(".h-head"), tl=h.querySelector(".tiles"); return hd && tl && hd.scrollHeight > hd.clientHeight + 2 || (h.querySelector(".askhome") && h.querySelector(".askhome").getBoundingClientRect().bottom > tl.getBoundingClientRect().top - 8); };
+  if(over()){ h.classList.add("tight"); if(over()) h.classList.add("tighter"); }
+}
+addEventListener("resize", ()=>{ clearTimeout(window.__fh); window.__fh=setTimeout(fitHome,120); });
+
 /* ── anonyme spørgsmål: vis godkendt spørgsmål på storskærmen ── */
-let qsId = null, qsHidden = null, qsb = null;
+let qsId = null, qsb = null, qsHidden = null; try{ qsHidden = +localStorage.getItem("vo-qs-hidden") || null; }catch(e){}
 function getSb(){ if(!qsb && CFG.supabaseUrl && CFG.supabaseAnonKey && window.supabase){ qsb = (typeof sb!=="undefined" && sb) || window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey); } return qsb; }
 async function syncQuestion(){
   const c = getSb(); if(!c) return;
@@ -885,7 +935,7 @@ async function syncQuestion(){
   $("#qsText").textContent = q.text;
   if(qsHidden !== id){ $("#qshow").classList.remove("on"); void $("#qshow").offsetWidth; $("#qshow").classList.add("on"); }
 }
-$("#qsX").addEventListener("click", e=>{ e.stopPropagation(); qsHidden = qsId; $("#qshow").classList.remove("on"); });
+$("#qsX").addEventListener("click", e=>{ e.stopPropagation(); qsHidden = qsId; try{ localStorage.setItem("vo-qs-hidden", String(qsId||"")); }catch(_){} $("#qshow").classList.remove("on"); });
 function askBig(on){ $("#askBig").classList.toggle("on", on===undefined ? !$("#askBig").classList.contains("on") : on); }
 $("#askBig").addEventListener("click", e=>{ e.stopPropagation(); askBig(false); });
 document.addEventListener("keydown", e=>{ if(e.target.matches("input,textarea")) return; if(e.key==="q"||e.key==="Q"){ e.stopImmediatePropagation(); askBig(); } }, true);

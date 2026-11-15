@@ -69,6 +69,11 @@ a{color:#7FF0BE}
       <div id="ok"></div>
       <details><summary>Afviste spørgsmål</summary><div id="no" style="margin-top:.6rem;display:flex;flex-direction:column;gap:.6rem"></div></details>
     </section>
+    <section class="card">
+      <h2>Ryd spørgsmål</h2>
+      <p class="empty">Sletter alle spørgsmål for denne måned – nye, godkendte og afviste – og fjerner spørgsmålet fra skærmen.</p>
+      <div class="btns"><button class="dng" id="qReset">Slet alle spørgsmål</button></div>
+    </section>
     <div class="err" id="err"></div>
   </div>
 </main>
@@ -155,6 +160,7 @@ document.addEventListener("click",e=>{
   if(b.dataset.a==="show") act("vo_q_show",{p_poll:POLL,p_id:id});
   if(b.dataset.a==="hide") act("vo_q_show",{p_poll:POLL,p_id:null});
 });
+$("#qReset").onclick=()=>{ if(confirm("Slet ALLE spørgsmål for denne måned? Det kan ikke fortrydes.")) act("vo_q_reset",{p_poll:POLL}); };
 $("#vStart").onclick=async()=>{ await sb.rpc("vo_start",{p_poll:POLL}); await loadState(); render(); };
 $("#vStop").onclick=()=>act("vo_stop",{p_poll:POLL});
 $("#vReset").onclick=()=>{ if(confirm("Nulstil alle svar? Alle kan derefter stemme igen.")) act("vo_reset",{p_poll:POLL}); };
