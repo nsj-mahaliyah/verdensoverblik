@@ -23,3 +23,10 @@ create policy "afgiv stemme" on public.votes for insert to anon, authenticated
 
 -- Live-opdatering på storskærmen
 alter publication supabase_realtime add table public.votes;
+
+-- ── Tilføjet 15.11.2026: start/stop/nulstil med kode ──
+-- Tabel vo_state (poll, open, round) styrer om afstemningen er åben.
+-- votes har kolonnen round; unik pr. (poll, round, device). Stemmer kun tilladt når vo_state.open og round passer.
+-- RPC: vo_start(p_poll) · vo_stop(p_poll, p_code) · vo_reset(p_poll, p_code)  (nulstil sletter alle stemmer og hæver round)
+-- Koden ligger kun som bcrypt-hash i skemaet vo_private (ikke tilgængeligt via API). Skift kode:
+--   update vo_private.admin set code_hash = extensions.crypt('NY_KODE', extensions.gen_salt('bf')) where id = 1;

@@ -359,6 +359,36 @@ body:hover .nav-arrow.show{opacity:.85}
   .ayah{font-size:1.9rem}.outro-ayah .ayah{font-size:1.6rem}
   .arkiv-link{bottom:1rem}
 }
+
+/* ── styring af afstemning ── */
+.vt-ctrl{display:flex;align-items:flex-start;gap:.8rem;flex-wrap:wrap}
+.vt-start{padding:.8rem 1.4rem;border-radius:2rem;border:0;background:var(--green);color:#fff;font:700 1.05rem Inter;cursor:pointer;box-shadow:0 0 0 0 rgba(31,169,113,.5);animation:breathe 2.4s infinite}
+.vt-adm{position:relative}
+.vt-adm summary{list-style:none;cursor:pointer;padding:.8rem 1.1rem;border-radius:2rem;border:1px solid var(--line);color:#A9B1BE;font-size:.95rem}
+.vt-adm summary::-webkit-details-marker{display:none}
+.vt-adm[open] summary{color:#fff;border-color:rgba(255,255,255,.3)}
+.vt-adm-in{position:absolute;left:0;bottom:calc(100% + .6rem);width:20rem;z-index:5;background:#161B24;border:1px solid rgba(255,255,255,.14);border-radius:1rem;padding:1rem;display:flex;flex-direction:column;gap:.6rem;box-shadow:0 1rem 2.5rem rgba(0,0,0,.5)}
+.vt-adm-in label{font-size:.8rem;color:#A9B1BE;letter-spacing:.1em;text-transform:uppercase}
+.vt-adm-in input{padding:.7rem .9rem;border-radius:.7rem;border:1px solid rgba(255,255,255,.16);background:#0E1117;color:#fff;font:600 1.1rem Inter;letter-spacing:.3em}
+.vt-adm-b{display:flex;gap:.5rem}
+.vt-adm-b button{flex:1;padding:.65rem .5rem;border-radius:.7rem;border:1px solid rgba(255,255,255,.16);background:transparent;color:#fff;font:600 .9rem Inter;cursor:pointer}
+.vt-adm-b button.danger{border-color:rgba(229,72,77,.5);color:#FF9A9E}
+.vt-adm-msg{font-size:.85rem;color:#FF9A9E;min-height:1.1em}.vt-adm-msg.ok{color:#7FF0BE}
+.vt.closed .vt-list{opacity:.55}
+
+/* ── mobil bundmenu ── */
+.mnav{display:none}
+@media (max-width:700px){
+  .mnav{display:grid;grid-template-columns:3.2rem 1fr 1fr 1fr 3.2rem;position:fixed;left:0;right:0;bottom:0;z-index:40;padding:.4rem .5rem calc(.4rem + env(safe-area-inset-bottom));background:rgba(14,17,23,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line)}
+  .mnav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.15rem;min-height:3.2rem;background:none;border:0;color:#8B93A1;font:600 .72rem Inter;border-radius:.8rem}
+  .mnav button svg{width:1.45rem;height:1.45rem}
+  .mnav button.on{color:#fff;background:rgba(31,169,113,.16)}
+  .mnav button:disabled{opacity:.25}
+  .screen{padding-bottom:5.5rem!important}
+  #top5Btn,#outroBtn{display:none!important}
+  .crumbs .pill[data-home]{display:none}
+  .vt-ctrl{display:none}
+}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -404,13 +434,20 @@ body:hover .nav-arrow.show{opacity:.85}
 
 <div id="pause" aria-hidden="true" title="Klik for at fortsætte"></div>
 
+<nav class="mnav" id="mnav" aria-label="Navigation">
+  <button data-mstep="-1" aria-label="Forrige"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></button>
+  <button data-home data-mv="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg><span>Overblik</span></button>
+  <button data-top5 data-mv="top5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Stem</span></button>
+  <button data-outro data-mv="outro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Pointer</span></button>
+  <button data-mstep="1" aria-label="Næste"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+</nav>
 <button class="nav-arrow l" id="prev" aria-label="Forrige"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></button>
 <button class="nav-arrow r" id="next" aria-label="Næste"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
 <div class="keys" id="keys"><kbd>←</kbd><kbd>→</kbd> bladr · <kbd>Esc</kbd> tilbage · <kbd>1–6</kbd> kategori · <kbd>F</kbd> fuld skærm · <kbd>P</kbd> pauseskærm</div>
 
-<script src="config.js?v=20261115c"></script>
+<script src="config.js?v=20261115d"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="data.js?v=20261115c"></script>
+<script src="data.js?v=20261115d"></script>
 <script>
 (function(){
 const D = window.VO;
@@ -509,6 +546,17 @@ function renderTop5(){
       <div class="vt-qr"><span class="qr">${QR}</span>
         <span><b>Scan og stem</b>Svarene kommer live her på skærmen</span></div>
       <div class="vt-total"><b id="vtTotal">0</b> stemmer <span class="vt-live" id="vtLive">Forbinder …</span></div>
+      <div class="vt-ctrl">
+        <button class="vt-start" id="vtStart" data-vstart>Start afstemning</button>
+        <details class="vt-adm" id="vtAdm"><summary aria-label="Styring">Styring ▾</summary>
+          <div class="vt-adm-in">
+            <label for="vtCode">Kode</label>
+            <input id="vtCode" type="password" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="••••">
+            <div class="vt-adm-b"><button data-vstop>Stop afstemning</button><button class="danger" data-vreset>Nulstil alle svar</button></div>
+            <div class="vt-adm-msg" id="vtAdmMsg" role="status"></div>
+          </div>
+        </details>
+      </div>
     </div>
     <div class="vt-list">${L.map(r=>{const c=catBy[r.s.cat];return `
       <div class="vt-row" style="--c:${c.c}" data-vrow="${r.s.id}">
@@ -520,13 +568,13 @@ function renderTop5(){
         <span class="vt-num"><b>0</b><small>0%</small></span>
       </div>`}).join("")}</div>
   </div>`;
-  paintVotes(); startVotes();
+  paintVotes(); paintState(); startVotes();
 }
 
 /* ── live afstemning (Supabase) ── */
 const CFG = window.VO_CONFIG || {};
 const POLL = D.pollId || D.month;
-let votes = {}, voteSub = null, sb = null;
+let votes = {}, voteSub = null, sb = null, vstate = {open:false, round:1}, tick = null;
 function paintVotes(){
   const ids = D.top5.map(t=>t.id), total = ids.reduce((a,id)=>a+(votes[id]||0),0), max = Math.max(1,...ids.map(id=>votes[id]||0));
   const tEl = $("#vtTotal"); if(tEl) tEl.textContent = total;
@@ -538,26 +586,55 @@ function paintVotes(){
   });
 }
 function liveState(txt, ok){ const el=$("#vtLive"); if(el){ el.textContent=txt; el.classList.toggle("on",!!ok); } }
+function paintState(){
+  const st=$("#vtStart"); if(st){ st.style.display = vstate.open ? "none" : ""; }
+  const vt=$("#top5 .vt"); if(vt) vt.classList.toggle("closed", !vstate.open);
+  if(sb) liveState(vstate.open ? "● Åben · live" : "Lukket", vstate.open);
+  clearInterval(tick); tick=null;
+  if(vstate.open && cur && cur.view==="top5") tick = setInterval(syncVotes, 1000);   // opdater hvert sekund når åben
+}
+async function syncState(){
+  if(!sb) return;
+  const { data } = await sb.from("vo_state").select("open,round").eq("poll", POLL).maybeSingle();
+  const ns = data || {open:false, round:1};
+  const changed = ns.open!==vstate.open || ns.round!==vstate.round;
+  vstate = ns; if(changed){ paintState(); syncVotes(); }
+}
 async function syncVotes(){
   if(!sb) return;
-  const { data, error } = await sb.from("votes").select("story").eq("poll", POLL).limit(5000);
+  const { data, error } = await sb.from("votes").select("story").eq("poll", POLL).eq("round", vstate.round).limit(5000);
   if(error) return;
   votes = {}; (data||[]).forEach(r=>{ votes[r.story]=(votes[r.story]||0)+1; }); paintVotes();
 }
-setInterval(()=>{ if(cur && cur.view==="top5") syncVotes(); }, 15000);
-document.addEventListener("visibilitychange", ()=>{ if(!document.hidden && cur && cur.view==="top5") syncVotes(); });
+setInterval(()=>{ if(cur && cur.view==="top5") syncState(); }, 5000);
+document.addEventListener("visibilitychange", ()=>{ if(!document.hidden && cur && cur.view==="top5"){ syncState(); syncVotes(); } });
 async function startVotes(){
-  if(voteSub) return;
+  if(voteSub){ syncState(); return; }
   if(!CFG.supabaseUrl || !CFG.supabaseAnonKey || !window.supabase){ liveState("Afstemningen er ikke sat op endnu"); return; }
   try{
     sb = sb || window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey);
-    const { data, error } = await sb.from("votes").select("story").eq("poll", POLL).limit(5000);
-    if(error) throw error;
-    votes = {}; (data||[]).forEach(r=>{ votes[r.story]=(votes[r.story]||0)+1; }); paintVotes();
+    await syncState(); await syncVotes(); paintState();
     voteSub = sb.channel("votes-"+POLL)
-      .on("postgres_changes",{event:"INSERT",schema:"public",table:"votes",filter:"poll=eq."+POLL}, p=>{ const s=p.new&&p.new.story; if(s){ votes[s]=(votes[s]||0)+1; paintVotes(); } })
-      .subscribe(st=>{ if(st==="SUBSCRIBED"){ liveState("● Live",true); syncVotes(); } else if(st==="CHANNEL_ERROR"||st==="TIMED_OUT"||st==="CLOSED") liveState("Genopretter forbindelse …"); });
+      .on("postgres_changes",{event:"INSERT",schema:"public",table:"votes",filter:"poll=eq."+POLL}, p=>{ const n=p.new||{}; if(n.story && n.round===vstate.round){ votes[n.story]=(votes[n.story]||0)+1; paintVotes(); } })
+      .on("postgres_changes",{event:"*",schema:"public",table:"vo_state",filter:"poll=eq."+POLL}, p=>{ if(p.new&&p.new.poll){ const ch = p.new.round!==vstate.round; vstate={open:p.new.open,round:p.new.round}; paintState(); if(ch) syncVotes(); } })
+      .subscribe(st=>{ if(st==="SUBSCRIBED"){ paintState(); syncVotes(); } else if(st==="CHANNEL_ERROR"||st==="TIMED_OUT"||st==="CLOSED") liveState("Genopretter forbindelse …"); });
   }catch(e){ liveState("Kunne ikke hente stemmer"); }
+}
+function admMsg(t, ok){ const m=$("#vtAdmMsg"); if(m){ m.textContent=t; m.classList.toggle("ok",!!ok); } }
+async function admCall(fn){
+  if(!sb) return;
+  const code = ($("#vtCode")||{}).value || "";
+  if(fn!=="vo_start" && !code){ admMsg("Indtast koden først"); return; }
+  admMsg("Arbejder …");
+  const args = fn==="vo_start" ? {p_poll:POLL} : {p_poll:POLL, p_code:code};
+  const { data, error } = await sb.rpc(fn, args);
+  if(error){ admMsg(error.code==="28000" ? "Forkert kode" : "Det lykkedes ikke – prøv igen"); return; }
+  if(data){ vstate = {open:data.open, round:data.round}; }
+  if(fn==="vo_reset"){ votes={}; paintVotes(); admMsg("Alle svar er nulstillet – alle kan stemme igen", true); }
+  else if(fn==="vo_stop") admMsg("Afstemningen er stoppet", true);
+  else admMsg("");
+  const c=$("#vtCode"); if(c && fn!=="vo_start") c.value="";
+  paintState(); syncVotes();
 }
 
 /* ── kategori ── */
@@ -649,7 +726,7 @@ function show(view, id){
   if(view!=="story") cameFromTop5 = (view==="top5") ? true : (view==="home"||view==="cat"||view==="intro"||view==="outro") ? false : cameFromTop5;
   const target = {top5:"#top5",home:"#home",cat:"#cat",story:"#story",intro:"#intro",outro:"#outro"}[view];
   if(view==="outro") renderOutro();
-  if(view==="top5") renderTop5();
+  if(view==="top5") renderTop5(); else { clearInterval(tick); tick=null; }
   if(view==="cat") renderCat(id);
   if(view==="story"){ renderStory(id); requestAnimationFrame(placePins); }
   if(view==="home"||view==="intro"||view==="outro"||view==="top5") document.documentElement.style.setProperty("--c","#1FA971");
@@ -661,7 +738,8 @@ function show(view, id){
     else if(s.classList.contains("on")){ s.classList.remove("on"); s.classList.add("out"); setTimeout(()=>s.classList.remove("out"),300); }
   });
   $("#mapwrap").classList.remove("zoom"); $("#mapwrap svg").style.transform="";
-  cur = {view,id}; crumbs(); $("#keys").style.opacity = view==="home"?.7:0;
+  cur = {view,id}; crumbs(); document.querySelectorAll("#mnav [data-mv]").forEach(b=>b.classList.toggle("on", b.dataset.mv===(view==="cat"||view==="story"?"home":view)));
+  document.querySelectorAll("#mnav [data-mstep]").forEach(b=>b.disabled = !(view==="cat"||view==="story")); $("#keys").style.opacity = view==="home"?.7:0;
 }
 function route(){
   const h = decodeURIComponent((location.hash||"").slice(1));
@@ -710,7 +788,11 @@ function back(){ if(cur.view==="story" && cameFromTop5) go("afstemning"); else i
 document.addEventListener("click", e=>{
   if(e.target.closest("[data-home]")){ go("overblik"); return; }
   if(e.target.closest("[data-outro]")){ go("afslutning"); return; }
+  const ms=e.target.closest("[data-mstep]"); if(ms){ step(+ms.dataset.mstep); return; }
   if(e.target.closest("[data-top5]")){ go("afstemning"); return; }
+  if(e.target.closest("[data-vstart]")){ admCall("vo_start"); return; }
+  if(e.target.closest("[data-vstop]")){ admCall("vo_stop"); return; }
+  if(e.target.closest("[data-vreset]")){ if(confirm("Nulstil alle svar? Alle kan derefter stemme igen.")) admCall("vo_reset"); return; }
   if(e.target.closest("[data-gohome]")){ go("overblik"); return; }
   const g = e.target.closest("[data-go]");
   if(g){ const id=g.dataset.go;

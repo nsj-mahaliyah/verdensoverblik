@@ -19,3 +19,5 @@ Billeder: img/*.jpg = HD 2560×1600 (q82) til one-pager og hovedkort; img/sm/*.j
 - Live-afstemning: stem.html (telefon) + afstemningssiden (storskærm). Supabase-nøgler i config.js. Tabel oprettes med supabase/opsaetning.sql. pollId i data.js (fx "2026-11") – ny måned = ny afstemning automatisk.
 - Uden internet: sw.js gemmer siden og billederne. Hæv VERSION i sw.js ved hver månedlig opdatering, og opdatér CORE-listen hvis billednavne ændres.
 - Arkiv: før en ny måned lægges ind, kopieres den nuværende til arkiv/<pollId>/ (index.html med ../../config.js og VO_SW="../../sw.js", data.js og img/), og der tilføjes en linje i arkiv/maaneder.js.
+- Styring: "Start afstemning" (ingen kode) og "Styring ▾" med kode til Stop / Nulstil alle svar. Når åben opdateres tallene hvert sekund. Kontrollerne er skjult på mobil. Koden skiftes i Supabase (se supabase/opsaetning.sql).
+- Mobil: bundmenu (‹ Overblik · Stem · Pointer ›).

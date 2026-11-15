@@ -30,6 +30,10 @@ h1{font:800 1.75rem/1.1 Poppins,sans-serif}
 .opt.mine{border-color:var(--green)}
 .msg{padding:.9rem 1rem;border-radius:.9rem;font-size:.95rem;line-height:1.4;display:none}
 .msg.ok{display:block;background:rgba(31,169,113,.15);color:#7FF0BE;border:1px solid rgba(31,169,113,.4)}
+.msg.wait{display:block;background:rgba(212,175,55,.12);color:#F1D27A;border:1px solid rgba(212,175,55,.4)}
+.msg.open{display:block;background:rgba(91,141,239,.12);color:#A9C3F7;border:1px solid rgba(91,141,239,.4)}
+.closed .opt{opacity:.55}
+.opt:disabled{cursor:default}
 .msg.err{display:block;background:rgba(229,72,77,.12);color:#FF9A9E;border:1px solid rgba(229,72,77,.4)}
 .foot{color:#6E7684;font-size:.8rem;text-align:center;margin-top:.5rem}
 </style>
@@ -43,9 +47,9 @@ h1{font:800 1.75rem/1.1 Poppins,sans-serif}
   <div id="list" style="display:flex;flex-direction:column;gap:.7rem"></div>
   <p class="foot">Månedens Verdensoverblik</p>
 </main>
-<script src="config.js?v=20261115c"></script>
+<script src="config.js?v=20261115d"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="data.js?v=20261115c"></script>
+<script src="data.js?v=20261115d"></script>
 <script>
 (function(){
 const D=window.VO, CFG=window.VO_CONFIG||{}, POLL=D.pollId||D.month;
@@ -54,42 +58,61 @@ const NAME={lokalt:"Lokalt",danmark:"Danmark",globalt:"Globalt",mellemosten:"Mel
 const byId=Object.fromEntries(D.stories.map(s=>[s.id,s]));
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const $=s=>document.querySelector(s);
-const VKEY="vo-voted-"+POLL;
 let dev; try{ dev=localStorage.getItem("vo-device"); if(!dev){ dev=(crypto.randomUUID?crypto.randomUUID():String(Math.random()).slice(2)+Date.now()); localStorage.setItem("vo-device",dev);} }catch(e){ dev="x"+Math.random(); }
-let mine=null; try{ mine=localStorage.getItem(VKEY); }catch(e){}
-let votes={}, sb=null, busy=false;
+let st={open:false,round:1}, mine=null, votes={}, sb=null, busy=false;
+const vkey=()=>"vo-voted-"+POLL+"-r"+st.round;
+function loadMine(){ try{ mine=localStorage.getItem(vkey()); }catch(e){ mine=null; } }
 $("#month").textContent=D.month+" · Afstemning";
 const L=D.top5.map((t,i)=>({...t,s:byId[t.id],n:i+1}));
 $("#list").innerHTML=L.map(r=>`<button class="opt" style="--c:${COL[r.s.cat]}" data-id="${r.s.id}">
   <span class="im" style="background-image:url('img/sm/${r.s.img}')"><i>${r.n}</i></span>
   <span class="tx"><span class="ct">${NAME[r.s.cat]}</span><b>${esc(r.s.title)}</b>
   <span class="bar"><span style="width:0%"></span></span><span class="pct">0 %</span></span></button>`).join("");
-function msg(t,cls){ const m=$("#msg"); m.textContent=t; m.className="msg "+cls; }
+function msg(t,cls){ const m=$("#msg"); m.textContent=t; m.className="msg "+(cls||""); }
 function paint(){
   const ids=L.map(r=>r.s.id), tot=ids.reduce((a,i)=>a+(votes[i]||0),0), max=Math.max(1,...ids.map(i=>votes[i]||0));
   document.querySelectorAll(".opt").forEach(b=>{ const id=b.dataset.id, v=votes[id]||0;
     b.querySelector(".bar span").style.width=(tot?v/max*100:0)+"%";
     b.querySelector(".pct").textContent=(tot?Math.round(v/tot*100):0)+" % · "+v+" stemmer";
-    b.classList.toggle("mine",id===mine); });
+    b.classList.toggle("mine",id===mine); b.disabled = !st.open || !!mine; });
   $("#app").classList.toggle("voted",!!mine);
+  $("#app").classList.toggle("closed",!st.open && !mine);
+  if(mine) msg("Tak – din stemme er talt. Resultatet opdateres live.","ok");
+  else if(!st.open) msg("Afstemningen er ikke startet endnu – vent på taleren. Siden opdaterer af sig selv.","wait");
+  else msg("Afstemningen er åben – tryk på en sag.","open");
 }
-if(mine){ msg("Tak – din stemme er talt. Resultatet opdateres live.","ok"); }
-if(!CFG.supabaseUrl||!CFG.supabaseAnonKey||!window.supabase){ msg("Afstemningen er ikke åben endnu.","err"); paint(); return; }
+async function syncState(){
+  const {data}=await sb.from("vo_state").select("open,round").eq("poll",POLL).maybeSingle();
+  const ns=data||{open:false,round:1}; const rc=ns.round!==st.round;
+  st=ns; if(rc){ votes={}; } loadMine(); paint(); if(rc||mine) syncVotes();
+}
+async function syncVotes(){
+  const {data}=await sb.from("votes").select("story").eq("poll",POLL).eq("round",st.round).limit(5000);
+  votes={}; (data||[]).forEach(r=>{votes[r.story]=(votes[r.story]||0)+1}); paint();
+}
+if(!CFG.supabaseUrl||!CFG.supabaseAnonKey||!window.supabase){ msg("Afstemningen er ikke sat op endnu.","err"); return; }
 sb=window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey);
 (async()=>{
-  const {data}=await sb.from("votes").select("story").eq("poll",POLL).limit(5000);
-  (data||[]).forEach(r=>{votes[r.story]=(votes[r.story]||0)+1}); paint();
-  sb.channel("stem-"+POLL).on("postgres_changes",{event:"INSERT",schema:"public",table:"votes",filter:"poll=eq."+POLL},p=>{const s=p.new&&p.new.story; if(s){votes[s]=(votes[s]||0)+1; paint();}}).subscribe();
+  await syncState(); await syncVotes();
+  sb.channel("stem-"+POLL)
+    .on("postgres_changes",{event:"INSERT",schema:"public",table:"votes",filter:"poll=eq."+POLL},p=>{const n=p.new||{}; if(n.story&&n.round===st.round){votes[n.story]=(votes[n.story]||0)+1; paint();}})
+    .on("postgres_changes",{event:"*",schema:"public",table:"vo_state",filter:"poll=eq."+POLL},()=>syncState())
+    .subscribe();
+  setInterval(syncState, 3000);
+  setInterval(()=>{ if(mine) syncVotes(); }, 2000);
+  document.addEventListener("visibilitychange",()=>{ if(!document.hidden) syncState(); });
 })();
 document.addEventListener("click",async e=>{
-  const b=e.target.closest(".opt"); if(!b||mine||busy) return;
+  const b=e.target.closest(".opt"); if(!b||mine||busy||!st.open) return;
   busy=true; const id=b.dataset.id;
-  const {error}=await sb.from("votes").insert({poll:POLL,story:id,device:dev});
+  const {error}=await sb.from("votes").insert({poll:POLL,round:st.round,story:id,device:dev});
   busy=false;
-  if(error){ if(error.code==="23505"){ mine=mine||"?"; try{localStorage.setItem(VKEY,mine)}catch(_){} msg("Du har allerede stemt fra denne telefon.","ok"); paint(); }
-             else msg("Stemmen kunne ikke sendes – prøv igen.","err"); return; }
-  mine=id; try{localStorage.setItem(VKEY,id)}catch(_){}
-  msg("Tak – din stemme er talt. Resultatet opdateres live.","ok"); paint();
+  if(error){
+    if(error.code==="23505"){ mine="?"; try{localStorage.setItem(vkey(),"?")}catch(_){} paint(); }
+    else { await syncState(); if(!st.open) paint(); else msg("Stemmen kunne ikke sendes – prøv igen.","err"); }
+    return; }
+  mine=id; try{localStorage.setItem(vkey(),id)}catch(_){}
+  paint(); syncVotes();
 });
 paint();
 })();
