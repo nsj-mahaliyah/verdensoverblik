@@ -30,3 +30,7 @@ alter publication supabase_realtime add table public.votes;
 -- RPC: vo_start(p_poll) · vo_stop(p_poll, p_code) · vo_reset(p_poll, p_code)  (nulstil sletter alle stemmer og hæver round)
 -- Koden ligger kun som bcrypt-hash i skemaet vo_private (ikke tilgængeligt via API). Skift kode:
 --   update vo_private.admin set code_hash = extensions.crypt('NY_KODE', extensions.gen_salt('bf')) where id = 1;
+
+-- ── Tilføjet 15.11.2026: skift stemme ──
+-- Stemmer afgives via RPC vo_vote(p_poll, p_round, p_story, p_device) – opretter eller ændrer telefonens stemme (kun når åben).
+-- anon kan kun læse kolonnerne id, poll, round, story, created_at (ikke telefon-id) og kan ikke skrive direkte i votes.

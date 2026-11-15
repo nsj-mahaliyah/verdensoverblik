@@ -445,9 +445,9 @@ body:hover .nav-arrow.show{opacity:.85}
 <button class="nav-arrow r" id="next" aria-label="Næste"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
 <div class="keys" id="keys"><kbd>←</kbd><kbd>→</kbd> bladr · <kbd>Esc</kbd> tilbage · <kbd>1–6</kbd> kategori · <kbd>F</kbd> fuld skærm · <kbd>P</kbd> pauseskærm</div>
 
-<script src="config.js?v=20261115d"></script>
+<script src="config.js?v=20261115e"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="data.js?v=20261115d"></script>
+<script src="data.js?v=20261115e"></script>
 <script>
 (function(){
 const D = window.VO;
@@ -616,7 +616,7 @@ async function startVotes(){
     sb = sb || window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey);
     await syncState(); await syncVotes(); paintState();
     voteSub = sb.channel("votes-"+POLL)
-      .on("postgres_changes",{event:"INSERT",schema:"public",table:"votes",filter:"poll=eq."+POLL}, p=>{ const n=p.new||{}; if(n.story && n.round===vstate.round){ votes[n.story]=(votes[n.story]||0)+1; paintVotes(); } })
+      .on("postgres_changes",{event:"*",schema:"public",table:"votes",filter:"poll=eq."+POLL}, ()=>syncVotes())
       .on("postgres_changes",{event:"*",schema:"public",table:"vo_state",filter:"poll=eq."+POLL}, p=>{ if(p.new&&p.new.poll){ const ch = p.new.round!==vstate.round; vstate={open:p.new.open,round:p.new.round}; paintState(); if(ch) syncVotes(); } })
       .subscribe(st=>{ if(st==="SUBSCRIBED"){ paintState(); syncVotes(); } else if(st==="CHANNEL_ERROR"||st==="TIMED_OUT"||st==="CLOSED") liveState("Genopretter forbindelse …"); });
   }catch(e){ liveState("Kunne ikke hente stemmer"); }

@@ -25,7 +25,7 @@ h1{font:800 1.75rem/1.1 Poppins,sans-serif}
 .opt .bar{height:.4rem;border-radius:1rem;background:rgba(255,255,255,.08);overflow:hidden;margin-top:.3rem;display:none}
 .opt .bar span{display:block;height:100%;background:var(--c);border-radius:1rem;transition:width .5s}
 .opt .pct{display:none;font-size:.8rem;color:#A9B1BE}
-.voted .opt{cursor:default}
+.voted .opt{cursor:pointer}
 .voted .opt .bar,.voted .opt .pct{display:block}
 .opt.mine{border-color:var(--green)}
 .msg{padding:.9rem 1rem;border-radius:.9rem;font-size:.95rem;line-height:1.4;display:none}
@@ -42,14 +42,14 @@ h1{font:800 1.75rem/1.1 Poppins,sans-serif}
 <main class="wrap" id="app">
   <div class="kick" id="month"></div>
   <h1>Hvad skal vi tale om først?</h1>
-  <p class="sub">Tryk på den sag, du helst vil drøfte. Du kan stemme én gang – det er anonymt.</p>
+  <p class="sub">Tryk på den sag, du helst vil drøfte. Du kan skifte stemme, så længe afstemningen er åben – det er anonymt.</p>
   <div class="msg" id="msg" role="status" aria-live="polite"></div>
   <div id="list" style="display:flex;flex-direction:column;gap:.7rem"></div>
   <p class="foot">Månedens Verdensoverblik</p>
 </main>
-<script src="config.js?v=20261115d"></script>
+<script src="config.js?v=20261115e"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="data.js?v=20261115d"></script>
+<script src="data.js?v=20261115e"></script>
 <script>
 (function(){
 const D=window.VO, CFG=window.VO_CONFIG||{}, POLL=D.pollId||D.month;
@@ -74,10 +74,11 @@ function paint(){
   document.querySelectorAll(".opt").forEach(b=>{ const id=b.dataset.id, v=votes[id]||0;
     b.querySelector(".bar span").style.width=(tot?v/max*100:0)+"%";
     b.querySelector(".pct").textContent=(tot?Math.round(v/tot*100):0)+" % · "+v+" stemmer";
-    b.classList.toggle("mine",id===mine); b.disabled = !st.open || !!mine; });
+    b.classList.toggle("mine",id===mine); b.disabled = !st.open; });
   $("#app").classList.toggle("voted",!!mine);
   $("#app").classList.toggle("closed",!st.open && !mine);
-  if(mine) msg("Tak – din stemme er talt. Resultatet opdateres live.","ok");
+  if(mine && st.open) msg("Tak – din stemme er talt. Tryk på en anden sag, hvis du vil skifte.","ok");
+  else if(mine) msg("Tak – din stemme er talt. Afstemningen er lukket.","ok");
   else if(!st.open) msg("Afstemningen er ikke startet endnu – vent på taleren. Siden opdaterer af sig selv.","wait");
   else msg("Afstemningen er åben – tryk på en sag.","open");
 }
@@ -95,7 +96,7 @@ sb=window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey);
 (async()=>{
   await syncState(); await syncVotes();
   sb.channel("stem-"+POLL)
-    .on("postgres_changes",{event:"INSERT",schema:"public",table:"votes",filter:"poll=eq."+POLL},p=>{const n=p.new||{}; if(n.story&&n.round===st.round){votes[n.story]=(votes[n.story]||0)+1; paint();}})
+    .on("postgres_changes",{event:"*",schema:"public",table:"votes",filter:"poll=eq."+POLL},()=>syncVotes())
     .on("postgres_changes",{event:"*",schema:"public",table:"vo_state",filter:"poll=eq."+POLL},()=>syncState())
     .subscribe();
   setInterval(syncState, 3000);
@@ -103,13 +104,13 @@ sb=window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey);
   document.addEventListener("visibilitychange",()=>{ if(!document.hidden) syncState(); });
 })();
 document.addEventListener("click",async e=>{
-  const b=e.target.closest(".opt"); if(!b||mine||busy||!st.open) return;
+  const b=e.target.closest(".opt"); if(!b||busy||!st.open) return;
   busy=true; const id=b.dataset.id;
-  const {error}=await sb.from("votes").insert({poll:POLL,round:st.round,story:id,device:dev});
+  if(id===mine) return;
+  const {error}=await sb.rpc("vo_vote",{p_poll:POLL,p_round:st.round,p_story:id,p_device:dev});
   busy=false;
   if(error){
-    if(error.code==="23505"){ mine="?"; try{localStorage.setItem(vkey(),"?")}catch(_){} paint(); }
-    else { await syncState(); if(!st.open) paint(); else msg("Stemmen kunne ikke sendes – prøv igen.","err"); }
+    await syncState(); if(!st.open) paint(); else msg("Stemmen kunne ikke sendes – prøv igen.","err");
     return; }
   mine=id; try{localStorage.setItem(vkey(),id)}catch(_){}
   paint(); syncVotes();
