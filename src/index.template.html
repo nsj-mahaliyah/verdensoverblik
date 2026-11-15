@@ -401,7 +401,9 @@ body:hover .nav-arrow.show{opacity:.85}
 .qshow.on{transform:translate(-50%,0)}
 .qs-k{font-size:.85rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#D4AF37;margin-bottom:.5rem}
 .qshow p{font:700 1.9rem/1.3 Poppins,sans-serif;color:#fff}
-.qs-x{position:absolute;top:.8rem;right:1rem;width:2.4rem;height:2.4rem;border-radius:50%;border:1px solid var(--line);background:transparent;color:#A9B1BE;font-size:1.4rem;cursor:pointer}
+.qs-x{position:absolute;top:1rem;right:1rem;width:2.4rem;height:2.4rem;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.04);color:#C9CED8;display:grid;place-items:center;cursor:pointer;transition:background .2s,color .2s}
+.qs-x:hover{background:rgba(255,255,255,.12);color:#fff}
+.qs-x svg{width:1rem;height:1rem;display:block}
 .askbig{position:fixed;inset:0;z-index:80;display:none;place-items:center;background:rgba(14,17,23,.94);cursor:pointer}
 .askbig.on{display:grid}
 .ab-in{display:flex;align-items:center;gap:3rem;max-width:60rem;padding:2rem}
@@ -472,7 +474,7 @@ body:hover .nav-arrow.show{opacity:.85}
 <section class="screen" id="cat" aria-label="Kategori"></section>
 <section class="screen" id="story" aria-label="Sag"></section>
 
-<div class="qshow" id="qshow" aria-live="polite"><div class="qs-k">Spørgsmål fra salen</div><p id="qsText"></p><button class="qs-x" id="qsX" aria-label="Skjul">×</button></div>
+<div class="qshow" id="qshow" aria-live="polite"><div class="qs-k">Spørgsmål fra salen</div><p id="qsText"></p><button class="qs-x" id="qsX" aria-label="Skjul spørgsmålet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
 <div class="askbig" id="askBig" role="dialog" aria-label="Stil et anonymt spørgsmål"><div class="ab-in"><div class="ab-qr">{{QRASK}}</div><div><div class="kick">Anonymt</div><h2>Har du et spørgsmål?</h2><p>Scan koden og skriv dit spørgsmål. Det vises på skærmen, hvis det bliver godkendt.</p><span class="ab-hint">Klik eller tryk Q for at lukke</span></div></div></div>
 <div id="pause" aria-hidden="true" title="Klik for at fortsætte"></div>
 
