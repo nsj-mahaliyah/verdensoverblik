@@ -320,6 +320,45 @@ body:hover .nav-arrow.show{opacity:.85}
 .vt-row.lead{border-color:var(--c);box-shadow:0 0 0 1px var(--c)}
 .arkiv-link{position:absolute;bottom:1.6rem;left:50%;transform:translateX(-50%);color:#8B93A1;font-size:.9rem;text-decoration:none}
 .arkiv-link:hover{color:#fff}
+
+/* ── mobil-forbedringer ── */
+@media (max-width:700px){
+  .top{padding:0 .8rem;gap:.5rem;height:3.8rem;background:linear-gradient(180deg,rgba(14,17,23,.96) 60%,rgba(14,17,23,0))}
+  .top .brand span{font-size:.95rem}
+  #fs{display:none}
+  .crumbs{margin-left:.2rem;gap:.35rem;min-width:0}
+  .pill{padding:.4rem .7rem;font-size:.85rem;white-space:nowrap}
+  .pill .flag{width:1.1em}
+  #top5Btn,#outroBtn{font-size:0;padding:.45rem .7rem}
+  #top5Btn::after{content:"Stem";font-size:.85rem}
+  #outroBtn::after{content:"Pointer ›";font-size:.85rem}
+  .screen{padding:4.4rem .9rem 2rem}
+  /* forside */
+  .h-head h1{font-size:2.3rem}
+  .quote{padding:.7rem .9rem}.q-row p{font-size:.98rem}
+  .mapwrap .mk text{font-size:15px}
+  .tiles{gap:.7rem}.tile{height:10.5rem;padding:.9rem}.t-name{font-size:1.25rem}.t-hook{font-size:.85rem;-webkit-line-clamp:2}
+  .first-badge{font-size:.6rem;padding:.25rem .55rem}
+  /* kategori */
+  .statchip{position:relative!important;top:auto;right:auto;align-self:flex-start;text-align:left;margin-bottom:auto}
+  .card.main{min-height:22rem}.card.main h2{font-size:1.8rem}.card h2{font-size:1.35rem}
+  /* sag */
+  .op{gap:1.2rem}
+  .op-img{min-height:0;padding:1.1rem;justify-content:flex-start;gap:.8rem}
+  .op-img::before{background:linear-gradient(180deg,rgba(14,17,23,.55),rgba(14,17,23,.92))!important}
+  .debate{position:relative!important;top:auto;left:auto;right:auto}
+  .mm{position:relative!important;top:auto;right:auto;width:auto;margin:0}
+  .op-img .tag{margin-top:.6rem}
+  .op-img h1{font-size:1.9rem}
+  .bigstat b{font-size:2.6rem}
+  .op-img .credit{position:relative!important;bottom:auto;right:auto;align-self:flex-end}
+  .op-body{gap:1.1rem}
+  .isl-row{grid-template-columns:1fr;gap:.2rem}
+  /* afslutning og åbning */
+  .outro-wrap h1{font-size:2.1rem}.pt h3{font-size:1.25rem}.pt p{font-size:1rem}
+  .ayah{font-size:1.9rem}.outro-ayah .ayah{font-size:1.6rem}
+  .arkiv-link{bottom:1rem}
+}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -500,6 +539,14 @@ function paintVotes(){
   });
 }
 function liveState(txt, ok){ const el=$("#vtLive"); if(el){ el.textContent=txt; el.classList.toggle("on",!!ok); } }
+async function syncVotes(){
+  if(!sb) return;
+  const { data, error } = await sb.from("votes").select("story").eq("poll", POLL).limit(5000);
+  if(error) return;
+  votes = {}; (data||[]).forEach(r=>{ votes[r.story]=(votes[r.story]||0)+1; }); paintVotes();
+}
+setInterval(()=>{ if(cur && cur.view==="top5") syncVotes(); }, 15000);
+document.addEventListener("visibilitychange", ()=>{ if(!document.hidden && cur && cur.view==="top5") syncVotes(); });
 async function startVotes(){
   if(voteSub) return;
   if(!CFG.supabaseUrl || !CFG.supabaseAnonKey || !window.supabase){ liveState("Afstemningen er ikke sat op endnu"); return; }
@@ -510,7 +557,7 @@ async function startVotes(){
     votes = {}; (data||[]).forEach(r=>{ votes[r.story]=(votes[r.story]||0)+1; }); paintVotes();
     voteSub = sb.channel("votes-"+POLL)
       .on("postgres_changes",{event:"INSERT",schema:"public",table:"votes",filter:"poll=eq."+POLL}, p=>{ const s=p.new&&p.new.story; if(s){ votes[s]=(votes[s]||0)+1; paintVotes(); } })
-      .subscribe(st=>{ if(st==="SUBSCRIBED") liveState("● Live",true); else if(st==="CHANNEL_ERROR"||st==="TIMED_OUT") liveState("Ingen live-forbindelse"); });
+      .subscribe(st=>{ if(st==="SUBSCRIBED"){ liveState("● Live",true); syncVotes(); } else if(st==="CHANNEL_ERROR"||st==="TIMED_OUT"||st==="CLOSED") liveState("Genopretter forbindelse …"); });
   }catch(e){ liveState("Kunne ikke hente stemmer"); }
 }
 
