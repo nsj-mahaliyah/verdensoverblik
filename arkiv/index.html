@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Arkiv – Månedens Verdensoverblik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0E1117;color:#fff;font-family:Inter,system-ui,sans-serif;min-height:100vh;padding:4rem 1.5rem}
+.wrap{max-width:60rem;margin:0 auto;display:flex;flex-direction:column;gap:1.6rem}
+.kick{font-size:.85rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#D4AF37}
+h1{font:800 clamp(2rem,5vw,3.4rem)/1 Poppins,sans-serif}
+.back{color:#7FF0BE;text-decoration:none;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(16rem,1fr));gap:1rem}
+.m{display:flex;flex-direction:column;gap:.5rem;padding:1.4rem;border-radius:1.2rem;background:#161B24;border:1px solid rgba(255,255,255,.09);border-top:.3rem solid #1FA971;color:#fff;text-decoration:none;transition:transform .2s,border-color .2s}
+.m:hover{transform:translateY(-3px);border-color:#1FA971}
+.m b{font:700 1.5rem Poppins,sans-serif}.m span{color:#A9B1BE;font-size:.9rem}.m i{font-style:normal;color:#E3E7EE;font-size:.95rem;margin-top:.3rem}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <a class="back" href="../">‹ Til denne måneds overblik</a>
+  <div class="kick">Arkiv</div>
+  <h1>Tidligere måneder</h1>
+  <div class="grid" id="grid"></div>
+</main>
+<script src="maaneder.js"></script>
+<script>
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+document.getElementById("grid").innerHTML=(window.ARKIV||[]).map(m=>`<a class="m" href="${esc(m.id)}/"><b>${esc(m.title)}</b><span>${esc(m.period)}</span>${m.top?`<i>Hovedsag: ${esc(m.top)}</i>`:""}</a>`).join("")||"<p>Ingen måneder i arkivet endnu.</p>";
+</script>
+</body>
+</html>

@@ -267,7 +267,7 @@ body:hover .nav-arrow.show{opacity:.85}
   #top5{padding:4.6rem 1rem 1.6rem}
   .vt{height:auto;display:flex;flex-direction:column;gap:1.2rem}
   .vt-side h1{font-size:2rem}.vt-side p{font-size:1rem}
-  .vt-qr{display:none}.vt-main p{display:none}
+  .vt-qr{display:none}
   .vt-list{display:flex;flex-direction:column;gap:.7rem}
   .vt-row{min-height:6.5rem}.vt-main .im{width:5.5rem}.vt-main h3{font-size:1rem}.vt-num{width:3.6rem}.vt-num b{font-size:1.6rem}
 }
@@ -314,6 +314,12 @@ body:hover .nav-arrow.show{opacity:.85}
 .flag{display:inline-block;width:1.25em;height:.9em;vertical-align:-.08em;border-radius:.15em;box-shadow:0 0 0 1px rgba(255,255,255,.25)}
 .t-ic .flag{width:1.7rem;height:1.2rem}
 .first-badge{align-self:flex-start;margin-bottom:.55rem;padding:.3rem .7rem;border-radius:2rem;background:#D4AF37;color:#0E1117;font-size:.7rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+
+.vt-live{margin-left:auto;font-size:.85rem;color:#8B93A1;padding:.3rem .8rem;border-radius:2rem;border:1px solid var(--line)}
+.vt-live.on{color:#FF8A8E;border-color:rgba(229,72,77,.45);background:rgba(229,72,77,.12)}
+.vt-row.lead{border-color:var(--c);box-shadow:0 0 0 1px var(--c)}
+.arkiv-link{position:absolute;bottom:1.6rem;left:50%;transform:translateX(-50%);color:#8B93A1;font-size:.9rem;text-decoration:none}
+.arkiv-link:hover{color:#fff}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -328,6 +334,7 @@ body:hover .nav-arrow.show{opacity:.85}
 </header>
 
 <section class="screen" id="intro" aria-label="Åbning" data-gohome>
+  <a class="arkiv-link" href="arkiv/" onclick="event.stopPropagation()">Tidligere måneder</a>
   <div>
     <div class="bism">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
     <div class="ayah" id="i-ayah"></div>
@@ -362,6 +369,8 @@ body:hover .nav-arrow.show{opacity:.85}
 <button class="nav-arrow r" id="next" aria-label="Næste"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
 <div class="keys" id="keys"><kbd>←</kbd><kbd>→</kbd> bladr · <kbd>Esc</kbd> tilbage · <kbd>1–6</kbd> kategori · <kbd>F</kbd> fuld skærm · <kbd>P</kbd> pauseskærm</div>
 
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="data.js"></script>
 <script>
 (function(){
@@ -447,9 +456,10 @@ function buildHome(){
 
 
 /* ── afstemning (top 5) ── */
-const QR = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 41" shape-rendering="crispEdges"><path fill="#FFFFFF" d="M0 0h41v41H0z"/><path stroke="#0E1117" d="M0 0.5h7m1 0h2m1 0h1m1 0h1m2 0h5m1 0h1m4 0h2m1 0h1m1 0h1m1 0h7M0 1.5h1m5 0h1m1 0h1m5 0h1m1 0h1m1 0h1m3 0h2m6 0h1m3 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m3 0h4m1 0h1m1 0h1m1 0h2m3 0h4m3 0h2m1 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h1m1 0h5m1 0h1m4 0h1m3 0h2m2 0h1m1 0h1m2 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m2 0h1m3 0h1m1 0h2m7 0h1m3 0h2m4 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m4 0h5m1 0h3m4 0h1m1 0h1m3 0h3m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h1m3 0h2m1 0h5m2 0h3m4 0h1m2 0h1M0 8.5h1m1 0h2m1 0h3m1 0h2m2 0h7m1 0h3m2 0h1m1 0h4m2 0h1m2 0h1m1 0h2M1 9.5h1m2 0h1m3 0h1m1 0h2m2 0h2m2 0h2m1 0h1m1 0h1m1 0h1m2 0h1m1 0h4m1 0h2m1 0h1m1 0h1M1 10.5h2m3 0h5m3 0h2m1 0h2m2 0h3m6 0h1m3 0h1m3 0h2M0 11.5h4m3 0h3m1 0h1m2 0h1m1 0h1m1 0h3m3 0h2m1 0h1m4 0h3m1 0h1m2 0h1M0 12.5h2m2 0h1m1 0h1m1 0h3m2 0h1m1 0h1m1 0h1m1 0h6m1 0h1m4 0h3m3 0h2M1 13.5h1m2 0h1m3 0h2m1 0h3m2 0h2m2 0h1m3 0h1m2 0h2m5 0h2m1 0h1M2 14.5h1m2 0h3m4 0h1m2 0h1m3 0h2m5 0h1m2 0h1m1 0h2m1 0h1m4 0h2M2 15.5h1m2 0h1m3 0h2m2 0h4m4 0h4m1 0h2m3 0h1m2 0h4M3 16.5h1m1 0h4m1 0h2m2 0h1m3 0h1m1 0h5m2 0h1m2 0h1m1 0h1m3 0h2M2 17.5h1m10 0h1m4 0h4m1 0h1m1 0h1m1 0h1m2 0h1m1 0h2m1 0h1m1 0h2M0 18.5h1m2 0h7m1 0h3m2 0h1m1 0h1m3 0h1m2 0h3m1 0h1m2 0h1m1 0h1m1 0h1m1 0h1M3 19.5h1m5 0h2m1 0h1m1 0h5m2 0h1m1 0h1m5 0h3m1 0h3m1 0h2m1 0h1M1 20.5h2m3 0h2m4 0h2m5 0h2m5 0h2m1 0h1m1 0h4m1 0h2m2 0h1M3 21.5h3m2 0h1m2 0h1m3 0h2m2 0h2m4 0h1m1 0h5m1 0h5m1 0h2M0 22.5h1m2 0h2m1 0h3m4 0h3m2 0h1m2 0h5m4 0h1m3 0h1m2 0h3M1 23.5h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m10 0h1m2 0h2m1 0h1m1 0h1m1 0h1m1 0h1m1 0h2m1 0h1M4 24.5h1m1 0h3m1 0h1m6 0h1m4 0h1m1 0h4m1 0h1m1 0h1m1 0h1m1 0h5M1 25.5h2m8 0h2m1 0h3m2 0h1m4 0h1m1 0h2m1 0h1m1 0h2m1 0h1m2 0h4M3 26.5h6m1 0h2m1 0h2m2 0h1m1 0h2m1 0h1m1 0h1m6 0h3m3 0h1m1 0h2M2 27.5h1m4 0h2m2 0h1m1 0h1m1 0h2m1 0h6m2 0h1m4 0h2m4 0h1m2 0h1M1 28.5h1m4 0h3m1 0h2m5 0h9m3 0h3m3 0h3m1 0h2M5 29.5h1m1 0h3m2 0h1m1 0h2m2 0h3m2 0h3m1 0h1m4 0h2m1 0h1m1 0h1m2 0h1M0 30.5h1m2 0h1m2 0h6m1 0h2m2 0h1m1 0h1m5 0h1m1 0h1m1 0h2m2 0h3m1 0h2M2 31.5h2m3 0h1m4 0h1m4 0h1m1 0h1m2 0h1m1 0h1m2 0h3m2 0h1m1 0h1m1 0h1m1 0h3M1 32.5h2m1 0h3m2 0h1m1 0h1m3 0h2m1 0h1m1 0h2m1 0h1m1 0h2m3 0h1m1 0h9M8 33.5h2m1 0h1m1 0h1m3 0h1m1 0h3m4 0h1m2 0h1m2 0h1m3 0h2m2 0h1M0 34.5h7m1 0h2m4 0h2m2 0h1m4 0h1m1 0h1m4 0h1m1 0h1m1 0h1m1 0h4M0 35.5h1m5 0h1m1 0h1m1 0h3m1 0h1m1 0h2m2 0h1m2 0h3m4 0h1m1 0h1m3 0h2m1 0h1M0 36.5h1m1 0h3m1 0h1m3 0h5m1 0h1m2 0h3m3 0h5m2 0h7m1 0h1M0 37.5h1m1 0h3m1 0h1m1 0h2m1 0h1m1 0h3m6 0h11m3 0h3m1 0h1M0 38.5h1m1 0h3m1 0h1m1 0h1m2 0h2m1 0h3m1 0h2m1 0h2m1 0h1m1 0h1m2 0h1m2 0h1m2 0h1m3 0h2M0 39.5h1m5 0h1m3 0h1m1 0h1m1 0h2m1 0h2m2 0h4m1 0h2m4 0h1m3 0h2m1 0h1M0 40.5h7m1 0h3m1 0h1m1 0h2m1 0h1m1 0h5m1 0h1m1 0h2m1 0h1m1 0h2m5 0h1"/></svg>
+const QR = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 33" shape-rendering="crispEdges"><path fill="#FFFFFF" d="M0 0h33v33H0z"/><path stroke="#0E1117" d="M0 0.5h7m2 0h2m5 0h4m3 0h1m2 0h7M0 1.5h1m5 0h1m2 0h1m1 0h1m3 0h1m1 0h1m3 0h2m3 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h4m2 0h1m1 0h1m1 0h1m2 0h1m4 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h1m2 0h2m4 0h1m1 0h1m2 0h3m1 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h1m1 0h10m1 0h1m1 0h1m2 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m1 0h2m2 0h1m4 0h1m2 0h2m2 0h1m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h1m5 0h1m1 0h1m1 0h1m1 0h5M0 8.5h1m1 0h5m2 0h2m1 0h3m2 0h1m1 0h1m2 0h1m1 0h1m1 0h5M1 9.5h1m1 0h1m1 0h1m3 0h1m2 0h2m3 0h4m2 0h1m2 0h2m1 0h2m1 0h1M0 10.5h2m1 0h1m1 0h2m1 0h2m2 0h4m2 0h1m1 0h2m6 0h1m1 0h2M0 11.5h1m2 0h1m3 0h2m4 0h1m4 0h1m2 0h2m2 0h2m1 0h3m1 0h1M3 12.5h2m1 0h6m2 0h4m4 0h4m2 0h2m1 0h1M0 13.5h4m1 0h1m1 0h2m2 0h1m3 0h1m3 0h2m2 0h1m2 0h1m2 0h4M0 14.5h1m5 0h4m2 0h6m2 0h2m2 0h8M1 15.5h2m1 0h1m2 0h3m1 0h1m1 0h3m4 0h2m1 0h4m1 0h3M1 16.5h1m1 0h1m1 0h2m1 0h2m1 0h1m1 0h1m1 0h1m1 0h1m4 0h1m1 0h2m1 0h3m2 0h1M0 17.5h1m1 0h1m10 0h2m1 0h1m1 0h3m2 0h2m1 0h2m1 0h4M1 18.5h4m1 0h1m1 0h1m1 0h3m1 0h3m3 0h1m3 0h5m1 0h2M4 19.5h2m2 0h1m2 0h3m1 0h2m1 0h1m2 0h12M3 20.5h1m1 0h3m1 0h1m2 0h1m1 0h2m1 0h1m1 0h1m3 0h1m1 0h1m1 0h3m1 0h2M0 21.5h1m7 0h1m3 0h1m2 0h7m1 0h1m1 0h2m3 0h1m1 0h1M0 22.5h1m1 0h3m1 0h2m1 0h4m5 0h1m2 0h1m3 0h2m4 0h1M0 23.5h1m3 0h1m2 0h1m1 0h1m1 0h1m2 0h1m1 0h1m3 0h3m3 0h1m2 0h3M0 24.5h1m2 0h1m1 0h3m5 0h1m2 0h2m2 0h1m1 0h1m1 0h5m3 0h1M8 25.5h1m2 0h1m1 0h1m2 0h2m1 0h2m3 0h1m3 0h1m1 0h1m1 0h1M0 26.5h7m5 0h1m1 0h2m4 0h1m1 0h3m1 0h1m1 0h1m1 0h1M0 27.5h1m5 0h1m1 0h1m2 0h1m3 0h1m5 0h4m3 0h5M0 28.5h1m1 0h3m1 0h1m1 0h2m1 0h2m4 0h1m1 0h2m1 0h1m1 0h6m1 0h2M0 29.5h1m1 0h3m1 0h1m1 0h1m1 0h1m4 0h1m2 0h3m1 0h2m1 0h1m2 0h5M0 30.5h1m1 0h3m1 0h1m1 0h1m2 0h2m2 0h1m4 0h3m1 0h4m2 0h1M0 31.5h1m5 0h1m3 0h1m1 0h5m1 0h2m1 0h1m3 0h1m2 0h3M0 32.5h7m1 0h1m1 0h2m1 0h1m3 0h1m4 0h3m1 0h2m3 0h1"/></svg>
 `;
-const RESULTS = "https://docs.google.com/forms/d/13J7Z5T9QSmYYfFvane2ZXcay0qE4MM-afbVHLj9dsfI/edit#responses";
+// (Google Formular erstattet af live-afstemning)
+const RESULTS_OLD = "https://docs.google.com/forms/d/13J7Z5T9QSmYYfFvane2ZXcay0qE4MM-afbVHLj9dsfI/edit#responses";
 const FORM = "https://docs.google.com/forms/d/e/1FAIpQLScQMwAxSvEjWAJE8YH-GmKrT8nGCVA4UsotEav_wu5ii-8sVg/viewform";
 function renderTop5(){
   const L = D.top5.map((t,i)=>({...t, s:byId[t.id], n:i+1}));
@@ -459,18 +469,49 @@ function renderTop5(){
       <h1>Hvad skal vi tale om først?</h1>
       <p>Scan koden med telefonens kamera og stem på den sag, du helst vil drøfte. Det er anonymt.</p>
       <div class="vt-qr"><span class="qr">${QR}</span>
-        <span><b>Scan og stem</b>Åbner afstemningen i Google Formularer</span></div>
-      <a class="vt-open" href="${RESULTS}" target="_blank" rel="noopener">Se svarene ↗</a>
+        <span><b>Scan og stem</b>Svarene kommer live her på skærmen</span></div>
+      <div class="vt-total"><b id="vtTotal">0</b> stemmer <span class="vt-live" id="vtLive">Forbinder …</span></div>
     </div>
     <div class="vt-list">${L.map(r=>{const c=catBy[r.s.cat];return `
-      <div class="vt-row" style="--c:${c.c}">
+      <div class="vt-row" style="--c:${c.c}" data-vrow="${r.s.id}">
         <button class="vt-main" data-open="${r.s.id}">
           <span class="im" style="background-image:url('${sm(r.s.img)}')"><i>${r.n}</i></span>
-          <span class="tx"><span class="ct">${c.name}</span><h3>${esc(r.s.title)}</h3><p>${esc(r.why)}</p></span>
-          <span class="go">›</span>
+          <span class="tx"><span class="ct">${c.name}</span><h3>${esc(r.s.title)}</h3>
+            <span class="bar"><span style="width:0%"></span></span></span>
         </button>
+        <span class="vt-num"><b>0</b><small>0%</small></span>
       </div>`}).join("")}</div>
   </div>`;
+  paintVotes(); startVotes();
+}
+
+/* ── live afstemning (Supabase) ── */
+const CFG = window.VO_CONFIG || {};
+const POLL = D.pollId || D.month;
+let votes = {}, voteSub = null, sb = null;
+function paintVotes(){
+  const ids = D.top5.map(t=>t.id), total = ids.reduce((a,id)=>a+(votes[id]||0),0), max = Math.max(1,...ids.map(id=>votes[id]||0));
+  const tEl = $("#vtTotal"); if(tEl) tEl.textContent = total;
+  ids.forEach(id=>{ const row=document.querySelector(`[data-vrow="${id}"]`); if(!row) return; const v=votes[id]||0;
+    row.querySelector(".bar span").style.width = (total? v/max*100 : 0)+"%";
+    row.querySelector(".vt-num b").textContent = v;
+    row.querySelector(".vt-num small").textContent = (total? Math.round(v/total*100):0)+"%";
+    row.classList.toggle("lead", total>0 && v===max);
+  });
+}
+function liveState(txt, ok){ const el=$("#vtLive"); if(el){ el.textContent=txt; el.classList.toggle("on",!!ok); } }
+async function startVotes(){
+  if(voteSub) return;
+  if(!CFG.supabaseUrl || !CFG.supabaseAnonKey || !window.supabase){ liveState("Afstemningen er ikke sat op endnu"); return; }
+  try{
+    sb = sb || window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey);
+    const { data, error } = await sb.from("votes").select("story").eq("poll", POLL).limit(5000);
+    if(error) throw error;
+    votes = {}; (data||[]).forEach(r=>{ votes[r.story]=(votes[r.story]||0)+1; }); paintVotes();
+    voteSub = sb.channel("votes-"+POLL)
+      .on("postgres_changes",{event:"INSERT",schema:"public",table:"votes",filter:"poll=eq."+POLL}, p=>{ const s=p.new&&p.new.story; if(s){ votes[s]=(votes[s]||0)+1; paintVotes(); } })
+      .subscribe(st=>{ if(st==="SUBSCRIBED") liveState("● Live",true); else if(st==="CHANNEL_ERROR"||st==="TIMED_OUT") liveState("Ingen live-forbindelse"); });
+  }catch(e){ liveState("Kunne ikke hente stemmer"); }
 }
 
 /* ── kategori ── */
@@ -650,6 +691,7 @@ document.addEventListener("keydown", e=>{
   else if((e.key==="Enter"||e.key===" ") && e.target.matches(".mk")){ e.preventDefault(); go(e.target.dataset.go); }
 });
 window.addEventListener("hashchange", route);
+if("serviceWorker" in navigator && location.protocol==="https:"){ navigator.serviceWorker.register((window.VO_SW||"sw.js")).catch(()=>{}); }
 /* ── pauseskærm: månedens skarpeste spørgsmål, når siden står stille ── */
 const PS_IDLE = 45000, PS_SLIDE = 12000;
 let psIdleT = null, psRotT = null, psIdx = 0, psOn = false;

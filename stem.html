@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0E1117">
+<title>Stem – Månedens Verdensoverblik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0E1117;--panel:#161B24;--line:rgba(255,255,255,.09);--green:#1FA971;--gold:#D4AF37}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:#fff;font-family:Inter,system-ui,sans-serif;min-height:100vh;padding:max(1.2rem,env(safe-area-inset-top)) 1rem 2rem}
+.wrap{max-width:30rem;margin:0 auto;display:flex;flex-direction:column;gap:1rem}
+.kick{font-size:.75rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+h1{font:800 1.75rem/1.1 Poppins,sans-serif}
+.sub{color:#A9B1BE;font-size:.95rem;line-height:1.45}
+.opt{display:flex;align-items:stretch;gap:.8rem;width:100%;min-height:5.6rem;background:var(--panel);border:2px solid var(--line);border-radius:1rem;overflow:hidden;color:#fff;text-align:left;font:inherit;cursor:pointer;padding:0;transition:border-color .2s,transform .1s}
+.opt:active{transform:scale(.98)}
+.opt .im{width:5.2rem;flex:none;background:center/cover no-repeat;position:relative}
+.opt .im i{position:absolute;inset:0;display:grid;place-items:center;font:800 1.8rem Poppins;font-style:normal;background:rgba(14,17,23,.45)}
+.opt .tx{flex:1;display:flex;flex-direction:column;justify-content:center;gap:.25rem;padding:.6rem .8rem .6rem 0}
+.opt .ct{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--c)}
+.opt b{font-size:1rem;line-height:1.25}
+.opt .bar{height:.4rem;border-radius:1rem;background:rgba(255,255,255,.08);overflow:hidden;margin-top:.3rem;display:none}
+.opt .bar span{display:block;height:100%;background:var(--c);border-radius:1rem;transition:width .5s}
+.opt .pct{display:none;font-size:.8rem;color:#A9B1BE}
+.voted .opt{cursor:default}
+.voted .opt .bar,.voted .opt .pct{display:block}
+.opt.mine{border-color:var(--green)}
+.msg{padding:.9rem 1rem;border-radius:.9rem;font-size:.95rem;line-height:1.4;display:none}
+.msg.ok{display:block;background:rgba(31,169,113,.15);color:#7FF0BE;border:1px solid rgba(31,169,113,.4)}
+.msg.err{display:block;background:rgba(229,72,77,.12);color:#FF9A9E;border:1px solid rgba(229,72,77,.4)}
+.foot{color:#6E7684;font-size:.8rem;text-align:center;margin-top:.5rem}
+</style>
+</head>
+<body>
+<main class="wrap" id="app">
+  <div class="kick" id="month"></div>
+  <h1>Hvad skal vi tale om først?</h1>
+  <p class="sub">Tryk på den sag, du helst vil drøfte. Du kan stemme én gang – det er anonymt.</p>
+  <div class="msg" id="msg" role="status" aria-live="polite"></div>
+  <div id="list" style="display:flex;flex-direction:column;gap:.7rem"></div>
+  <p class="foot">Månedens Verdensoverblik</p>
+</main>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="data.js"></script>
+<script>
+(function(){
+const D=window.VO, CFG=window.VO_CONFIG||{}, POLL=D.pollId||D.month;
+const COL={lokalt:"#3DD68C",danmark:"#FF6B70",globalt:"#7FA6F5",mellemosten:"#E9C766",usa:"#9C90F7",kina:"#FF8A5C"};
+const NAME={lokalt:"Lokalt",danmark:"Danmark",globalt:"Globalt",mellemosten:"Mellemøsten",usa:"USA",kina:"Kina"};
+const byId=Object.fromEntries(D.stories.map(s=>[s.id,s]));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const $=s=>document.querySelector(s);
+const VKEY="vo-voted-"+POLL;
+let dev; try{ dev=localStorage.getItem("vo-device"); if(!dev){ dev=(crypto.randomUUID?crypto.randomUUID():String(Math.random()).slice(2)+Date.now()); localStorage.setItem("vo-device",dev);} }catch(e){ dev="x"+Math.random(); }
+let mine=null; try{ mine=localStorage.getItem(VKEY); }catch(e){}
+let votes={}, sb=null, busy=false;
+$("#month").textContent=D.month+" · Afstemning";
+const L=D.top5.map((t,i)=>({...t,s:byId[t.id],n:i+1}));
+$("#list").innerHTML=L.map(r=>`<button class="opt" style="--c:${COL[r.s.cat]}" data-id="${r.s.id}">
+  <span class="im" style="background-image:url('img/sm/${r.s.img}')"><i>${r.n}</i></span>
+  <span class="tx"><span class="ct">${NAME[r.s.cat]}</span><b>${esc(r.s.title)}</b>
+  <span class="bar"><span style="width:0%"></span></span><span class="pct">0 %</span></span></button>`).join("");
+function msg(t,cls){ const m=$("#msg"); m.textContent=t; m.className="msg "+cls; }
+function paint(){
+  const ids=L.map(r=>r.s.id), tot=ids.reduce((a,i)=>a+(votes[i]||0),0), max=Math.max(1,...ids.map(i=>votes[i]||0));
+  document.querySelectorAll(".opt").forEach(b=>{ const id=b.dataset.id, v=votes[id]||0;
+    b.querySelector(".bar span").style.width=(tot?v/max*100:0)+"%";
+    b.querySelector(".pct").textContent=(tot?Math.round(v/tot*100):0)+" % · "+v+" stemmer";
+    b.classList.toggle("mine",id===mine); });
+  $("#app").classList.toggle("voted",!!mine);
+}
+if(mine){ msg("Tak – din stemme er talt. Resultatet opdateres live.","ok"); }
+if(!CFG.supabaseUrl||!CFG.supabaseAnonKey||!window.supabase){ msg("Afstemningen er ikke åben endnu.","err"); paint(); return; }
+sb=window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey);
+(async()=>{
+  const {data}=await sb.from("votes").select("story").eq("poll",POLL).limit(5000);
+  (data||[]).forEach(r=>{votes[r.story]=(votes[r.story]||0)+1}); paint();
+  sb.channel("stem-"+POLL).on("postgres_changes",{event:"INSERT",schema:"public",table:"votes",filter:"poll=eq."+POLL},p=>{const s=p.new&&p.new.story; if(s){votes[s]=(votes[s]||0)+1; paint();}}).subscribe();
+})();
+document.addEventListener("click",async e=>{
+  const b=e.target.closest(".opt"); if(!b||mine||busy) return;
+  busy=true; const id=b.dataset.id;
+  const {error}=await sb.from("votes").insert({poll:POLL,story:id,device:dev});
+  busy=false;
+  if(error){ if(error.code==="23505"){ mine=mine||"?"; try{localStorage.setItem(VKEY,mine)}catch(_){} msg("Du har allerede stemt fra denne telefon.","ok"); paint(); }
+             else msg("Stemmen kunne ikke sendes – prøv igen.","err"); return; }
+  mine=id; try{localStorage.setItem(VKEY,id)}catch(_){}
+  msg("Tak – din stemme er talt. Resultatet opdateres live.","ok"); paint();
+});
+paint();
+})();
+</script>
+</body>
+</html>

@@ -4,6 +4,7 @@
 window.VO = {
   month: "November 2026",
   period: "15. oktober – 14. november 2026",
+  pollId: "2026-11",
   pause: [
     {id:"hormuz", q:"Hormuz ligger i muslimernes land – hvorfor er det USA's flåde, der bestemmer, hvem der må sejle?"},
     {id:"gaza-styrke", q:"Muslimske soldater under amerikansk kommando i Gaza – skal de beskytte folket eller besættelsen?"},

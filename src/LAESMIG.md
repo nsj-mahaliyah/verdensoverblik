@@ -14,3 +14,8 @@ Mini-kort pr. sag: feltet actors (ISO-numre, fx "840" USA) i data.js. Pins-koord
 actors kan indeholde "*" (alle lande lyses svagt op, fx FN-topmøder) og actorNote overskriver teksten under kortet.
 Forsidens rækkefølge: kategorierne sorteres efter top5 (den varmeste først, med mærket "Månedens vigtigste"); kan overstyres med D.catOrder. Flag er SVG (FLAG i skabelonen) – ingen flag-emojis, de vises ikke på Windows.
 Billeder: img/*.jpg = HD 2560×1600 (q82) til one-pager og hovedkort; img/sm/*.jpg = 1000 px (q80) til fliser, små kort og afstemning. Lav begge, når billeder skiftes.
+
+## GitHub Pages-version (nsj-mahaliyah/verdensoverblik)
+- Live-afstemning: stem.html (telefon) + afstemningssiden (storskærm). Supabase-nøgler i config.js. Tabel oprettes med supabase/opsaetning.sql. pollId i data.js (fx "2026-11") – ny måned = ny afstemning automatisk.
+- Uden internet: sw.js gemmer siden og billederne. Hæv VERSION i sw.js ved hver månedlig opdatering, og opdatér CORE-listen hvis billednavne ændres.
+- Arkiv: før en ny måned lægges ind, kopieres den nuværende til arkiv/<pollId>/ (index.html med ../../config.js og VO_SW="../../sw.js", data.js og img/), og der tilføjes en linje i arkiv/maaneder.js.
