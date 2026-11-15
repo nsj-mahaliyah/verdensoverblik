@@ -449,6 +449,11 @@ body:hover .nav-arrow.show{opacity:.85}
 .bl-logo{display:flex;align-items:center;gap:1rem;opacity:.35;font:700 1.3rem Poppins,sans-serif;color:#fff}
 .bl-logo i{width:3.2rem;height:3.2rem;border-radius:1rem;background:linear-gradient(135deg,var(--green),#0d6b47);display:grid;place-items:center}
 @media (max-width:700px){ .scene{display:none} }
+
+.ps-ask{display:flex;align-items:center;gap:.9rem;text-align:left}
+.ps-ask .aq{width:6.5rem;height:6.5rem;background:#fff;border-radius:.6rem;padding:.3rem;display:block}
+.ps-ask .aq svg{width:100%;height:100%;display:block}
+.ps-ask b{display:block;color:#fff;font-size:1.05rem;margin-bottom:.15rem}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -943,6 +948,7 @@ setTimeout(()=>{
 }, 800);
 
 if("serviceWorker" in navigator && location.protocol==="https:"){ navigator.serviceWorker.register((window.VO_SW||"sw.js")).catch(()=>{}); }
+const QRASK = `{{QRASK}}`;
 /* ── pauseskærm: månedens skarpeste spørgsmål, når siden står stille ── */
 const PS_IDLE = 45000, PS_SLIDE = 12000;
 let psIdleT = null, psRotT = null, psIdx = 0, psOn = false;
@@ -955,9 +961,9 @@ function psBuild(){
       <div class="ps-body">
         <div class="ps-stat"><b>${esc(p.s.stat.v)}</b><span>${esc(p.s.stat.l)}</span></div>
         <div class="ps-q">${esc(p.q)}</div>
-        <div class="ps-cta">Har du et svar – eller et spørgsmål? Sig det højt.</div>
+        <div class="ps-cta">Har du et svar eller et spørgsmål? Ræk hånden op – eller spørg anonymt via QR-koden.</div>
       </div>
-      <div class="ps-foot"><span class="ps-dots">${PS.map(()=>"<i></i>").join("")}</span><span>Klik hvor som helst for at fortsætte</span></div>
+      <div class="ps-foot"><span class="ps-dots">${PS.map(()=>"<i></i>").join("")}</span><span class="ps-ask"><span class="aq">${QRASK}</span><span><b>Spørg anonymt</b>Klik hvor som helst for at fortsætte</span></span></div>
     </div>`}).join("");
 }
 function psShow(i){

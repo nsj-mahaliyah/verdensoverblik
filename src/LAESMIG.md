@@ -23,3 +23,4 @@ Billeder: img/*.jpg = HD 2560×1600 (q82) til one-pager og hovedkort; img/sm/*.j
 - Mobil: bundmenu (‹ Overblik · Stem · Pointer ›).
 - Anonyme spørgsmål: spoerg.html (telefon, via lille QR øverst til højre eller tast Q for stor QR). admin.html = styring (kode): godkend/afvis spørgsmål med lyd + notifikation, vis/skjul på storskærm, start/stop/nulstil afstemning. QR til spoerg.html: src/qr_spoerg.svg ({{QRASK}} i skabelonen).
 - Sceneskift: titelkort i 1,3 sek. når der bladres fra sag til sag. B = sort skærm (en vilkårlig tast/klik vender tilbage). Admin: "Slet alle spørgsmål".
+- .github/workflows/hold-databasen-vaagen.yml kalder Supabase mandag og torsdag, så det gratis projekt ikke går i dvale. GitHub slår planlagte workflows fra efter 60 dage uden commits – de månedlige opdateringer holder det i gang.
