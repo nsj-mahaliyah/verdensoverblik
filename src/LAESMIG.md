@@ -1,0 +1,16 @@
+# Månedens Verdensoverblik – byggenoter
+
+Filer: index.html (bygget), data.js (alt indhold: window.VO), img/*.jpg (2560×1600, Unsplash, ingen kvinder/ʿawrah).
+
+Månedlig opdatering = skift data.js + img/. index.html skal kun genbygges, hvis layout eller QR ændres:
+  python: index.template.html → erstat {{MAP}} (svg fra map.json, viewBox "40 28 920 392"), {{MARKERS}} (map.json markers) og {{QR}} (qrcode-SVG af afstemningslinket) → index.html.
+  build.mjs laver map.json (world-atlas countries-110m + d3-geo geoNaturalEarth1).
+
+data.js-felter pr. sag: id, cat (lokalt|danmark|globalt|mellemosten|usa|kina), main, img, title, hook?, date, stat{v,l}, what, background[], consequences[{k,t}×3], islam{problem,solution,ref}, debate, source.
+Desuden: month, period, top5[{id,why}], pause[{id,q}] (pauseskærm: skarpe spørgsmål til de 5 varmeste sager; vises kun når der trykkes P (automatisk visning fjernet efter ønske)), intro{ayah,tr,ref}, outro{points[3],ayah,tr,ref}.
+Afstemning: Google Formular-link i FORM (QR) og svar-link i RESULTS (knappen "Se svarene") i index.template.html + QR.
+Test: ingen overflow på 1920×1080, 1366×768, 1280×720 og 390×844.
+Mini-kort pr. sag: feltet actors (ISO-numre, fx "840" USA) i data.js. Pins-koordinater i pins.json (laves af pins.mjs: tilføj land med lon/lat), indsættes som {{PINS}}. Danske landenavne i LAND-tabellen i skabelonen.
+actors kan indeholde "*" (alle lande lyses svagt op, fx FN-topmøder) og actorNote overskriver teksten under kortet.
+Forsidens rækkefølge: kategorierne sorteres efter top5 (den varmeste først, med mærket "Månedens vigtigste"); kan overstyres med D.catOrder. Flag er SVG (FLAG i skabelonen) – ingen flag-emojis, de vises ikke på Windows.
+Billeder: img/*.jpg = HD 2560×1600 (q82) til one-pager og hovedkort; img/sm/*.jpg = 1000 px (q80) til fliser, små kort og afstemning. Lav begge, når billeder skiftes.

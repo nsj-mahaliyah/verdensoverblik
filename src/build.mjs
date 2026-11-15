@@ -1,0 +1,16 @@
+import fs from 'fs';
+import {geoNaturalEarth1, geoPath} from 'd3-geo';
+import {feature} from 'topojson-client';
+const topo = JSON.parse(fs.readFileSync('node_modules/world-atlas/countries-110m.json'));
+let fc = feature(topo, topo.objects.countries);
+fc.features = fc.features.filter(f=>f.id!=='010');
+const W=1000,H=470;
+const proj = geoNaturalEarth1().fitExtent([[0,0],[W,H]], fc);
+const path = geoPath(proj).digits(1);
+const ME = ['364','368','682','376','275','760','400','422','887','512','784','634','414','048','792','818'];
+const reg = id => id==='840'?'usa':id==='156'?'kina':id==='208'?'danmark':ME.includes(id)?'mellemosten':'globalt';
+let out = fc.features.map(f=>`<path class="c r-${reg(f.id)}" data-r="${reg(f.id)}" data-iso="${f.id}" d="${path(f)}"/>`).join('');
+const pt = (lon,lat)=>proj([lon,lat]).map(v=>+v.toFixed(1));
+const markers = {danmark:pt(9.5,56), lokalt:pt(12.45,55.95), mellemosten:pt(47,29), usa:pt(-98,39), kina:pt(104,35), globalt:pt(20,2)};
+fs.writeFileSync('map.json', JSON.stringify({svg:out, markers, W, H}));
+console.log(out.length, markers);

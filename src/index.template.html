@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Månedens Verdensoverblik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0E1117;--panel:#161C27;--line:#252D3B;--text:#fff;--muted:#A3ACBB;--dim:#6B7487;
+  --green:#1FA971;--gold:#D4AF37;--ease:cubic-bezier(.2,.8,.2,1);--c:#1FA971;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:clamp(11px,1.04vw,28px)}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;text-align:left}
+h1,h2,h3,.p{font-family:Poppins,Inter,sans-serif;letter-spacing:-.015em}
+:focus-visible{outline:3px solid var(--green);outline-offset:3px;border-radius:10px}
+
+/* ── ramme ── */
+.top{position:fixed;inset:0 0 auto 0;height:4.4rem;display:flex;align-items:center;gap:1rem;padding:0 2.2rem;z-index:30;pointer-events:none}
+.top>*{pointer-events:auto}
+.brand{display:flex;align-items:center;gap:.7rem;font-family:Poppins;font-weight:700;font-size:1.05rem;opacity:.95}
+.brand i{width:2rem;height:2rem;border-radius:.6rem;background:linear-gradient(135deg,var(--green),#0d6b47);display:grid;place-items:center}
+.brand small{display:block;font:500 .72rem Inter;color:var(--gold);letter-spacing:.14em;text-transform:uppercase}
+.crumbs{display:flex;align-items:center;gap:.5rem;margin-left:1.2rem}
+.pill{display:inline-flex;align-items:center;gap:.5rem;padding:.45rem .9rem;border-radius:2rem;background:rgba(22,28,39,.75);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);font-size:.9rem;font-weight:600;color:var(--muted);transition:all .25s}
+.pill:hover{color:#fff;border-color:#3a4558}
+.pill.c{color:#fff;border-color:color-mix(in srgb,var(--c) 60%,transparent);background:color-mix(in srgb,var(--c) 22%,rgba(22,28,39,.8))}
+.top .sp{flex:1}
+.ibtn{width:2.6rem;height:2.6rem;border-radius:50%;display:grid;place-items:center;background:rgba(22,28,39,.75);border:1px solid var(--line);color:var(--muted);transition:all .25s}
+.ibtn:hover{color:#fff;border-color:#3a4558}
+.ibtn svg{width:1.1rem;height:1.1rem}
+
+.screen{position:fixed;inset:0;padding:5.2rem 2.2rem 2rem;display:none}
+.screen.on{display:block;animation:in .55s var(--ease)}
+@keyframes in{from{opacity:0;transform:scale(1.015)}to{opacity:1;transform:none}}
+.screen.out{display:block;animation:out .3s var(--ease) forwards;pointer-events:none}
+@keyframes out{to{opacity:0;transform:scale(.985)}}
+
+/* ── forside ── */
+#home{display:none;grid-template-rows:1fr auto;gap:1rem}
+.h-main{display:grid;grid-template-columns:25.5rem 1fr;gap:1rem;min-height:0}
+#home.on,#home.out{display:grid}
+.h-head{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:2rem}
+.kick{font-size:.95rem;font-weight:700;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;display:flex;align-items:center;gap:.6rem}
+.kick::before{content:"";width:.55rem;height:.55rem;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(31,169,113,.6);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 .7rem rgba(31,169,113,0)}100%{box-shadow:0 0 0 0 rgba(31,169,113,0)}}
+.h-head h1{font-size:3.1rem;font-weight:800;line-height:1.02;margin-top:.5rem}
+.h-head h1 span{background:linear-gradient(90deg,#fff 35%,#4BE3A0);-webkit-background-clip:text;background-clip:text;color:transparent}
+.quote{max-width:none;position:relative;padding:.6rem 1.1rem .6rem 1.2rem;border-left:.3rem solid var(--gold);background:linear-gradient(90deg,rgba(212,175,55,.12),rgba(212,175,55,0));border-radius:0 1rem 1rem 0}
+.quote::before{content:"“";position:absolute;right:.8rem;top:-1rem;font:800 4rem/1 Poppins;color:rgba(212,175,55,.18)}
+.q-k{font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:.25rem}
+.quote blockquote{font-size:1.18rem;line-height:1.5;color:#E9ECF2}
+.q-row{display:flex;align-items:center;gap:.6rem;margin:.2rem 0}
+.q-row span{flex:none;width:1.45rem;height:1.45rem;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:.75rem}
+.q-row.no span{background:rgba(229,72,77,.18);color:#FF8A8E}.q-row.yes span{background:rgba(31,169,113,.2);color:#4BE3A0}
+.q-row p{font-size:1.05rem;line-height:1.3;color:#C9CED8}.q-row.yes p{color:#fff;font-weight:600}
+.q-row b{color:inherit;font-weight:800}.q-row.no b{color:#FF8A8E}.q-row.yes b{color:#4BE3A0}
+.quote blockquote{font-size:.78rem!important;color:rgba(233,236,242,.62)!important;font-style:italic;margin-top:.35rem;padding-top:.35rem;border-top:1px solid rgba(212,175,55,.2)}
+.quote q{quotes:"„" "“";color:#fff;font-weight:600}
+.quote figcaption{margin-top:.25rem;font-size:.72rem;color:rgba(233,199,102,.85);font-style:italic}
+.h-hint{color:var(--muted);font-size:1rem;max-width:26rem;text-align:right}
+
+.mapwrap{position:relative;min-height:0;display:flex;align-items:center;justify-content:center}
+.mapwrap svg{width:100%;height:100%;max-height:100%;overflow:visible;transition:transform .8s cubic-bezier(.7,0,.2,1),opacity .6s}
+.c{fill:#1B2230;stroke:#0E1117;stroke-width:.5;transition:fill .3s;cursor:pointer}
+.c:hover,.c.hl{fill:#2A3446}
+.r-danmark{fill:color-mix(in srgb,#E5484D 55%,#1B2230)}
+.r-mellemosten{fill:color-mix(in srgb,#D4AF37 45%,#1B2230)}
+.r-usa{fill:color-mix(in srgb,#7C6CF2 45%,#1B2230)}
+.r-kina{fill:color-mix(in srgb,#F2683C 45%,#1B2230)}
+.r-danmark.hl{fill:#E5484D}.r-mellemosten.hl{fill:#D4AF37}.r-usa.hl{fill:#7C6CF2}.r-kina.hl{fill:#F2683C}
+.r-globalt.hl{fill:color-mix(in srgb,#5B8DEF 40%,#1B2230)}
+.grid-lines{stroke:#fff;stroke-opacity:.04;fill:none}
+.mk{cursor:pointer}
+.mk .ring{fill:none;stroke:var(--mc);stroke-width:1.4;transform-box:fill-box;transform-origin:center;animation:ring 2.4s infinite}
+@keyframes ring{0%{transform:scale(.4);opacity:.9}100%{transform:scale(2.4);opacity:0}}
+.mk .dot{fill:var(--mc);stroke:#0E1117;stroke-width:1.5}
+.mk>rect{fill:rgba(14,17,23,.88);stroke:var(--mc);stroke-width:1}
+.mk text{fill:#fff;font:600 13px Poppins,Inter,sans-serif}
+.mk:hover>rect{fill:var(--mc)}
+.mk .mflag{stroke:none}
+.mapwrap.zoom svg{opacity:0}
+
+.tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:1rem;height:13.5rem}
+.tile{position:relative;border-radius:1.3rem;overflow:hidden;background:#000 center/cover no-repeat;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:flex-end;padding:1.1rem;transition:transform .4s var(--ease),box-shadow .4s var(--ease),border-color .3s}
+.tile::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,17,23,.05) 0%,rgba(14,17,23,.55) 45%,rgba(14,17,23,.96) 100%)}
+.tile::after{content:"";position:absolute;left:0;right:0;top:0;height:.32rem;background:var(--c)}
+.tile>*{position:relative}
+.tile:hover,.tile.hl{transform:translateY(-.6rem);border-color:var(--c);box-shadow:0 1.6rem 3rem -1rem color-mix(in srgb,var(--c) 55%,transparent)}
+.t-ic{font-size:1.7rem;margin-bottom:auto;width:2.8rem;height:2.8rem;border-radius:.8rem;display:grid;place-items:center;background:rgba(14,17,23,.6);backdrop-filter:blur(6px);position:absolute!important;top:1rem;left:1rem}
+.t-name{font-family:Poppins;font-weight:700;font-size:1.55rem;line-height:1.1}
+.t-hook{font-size:.98rem;color:#E3E7EE;margin-top:.45rem;line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+
+/* ── kategori ── */
+.cat-grid{height:100%;display:grid;grid-template-columns:1.65fr 1fr;grid-template-rows:1fr 1fr;gap:1.2rem}
+.card{position:relative;border-radius:1.5rem;overflow:hidden;background:#000 center/cover no-repeat;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:flex-end;padding:2rem;transition:transform .45s var(--ease),border-color .3s,box-shadow .45s}
+.card::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,17,23,0) 20%,rgba(14,17,23,.7) 60%,rgba(14,17,23,.97) 100%);transition:opacity .4s}
+.card>*{position:relative}
+.card:hover{transform:scale(1.012);border-color:var(--c);box-shadow:0 2rem 4rem -1.5rem color-mix(in srgb,var(--c) 50%,transparent)}
+.card.main{grid-row:1/3;padding:2.8rem}
+.tag{display:inline-flex;align-items:center;gap:.45rem;align-self:flex-start;font-size:.82rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:.35rem .75rem;border-radius:.5rem;background:var(--c);color:#0E1117}
+.tag.ghost{background:rgba(14,17,23,.6);color:#fff;border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(6px)}
+.card h2{font-size:1.75rem;font-weight:700;line-height:1.15;margin-top:.8rem}
+.card.main h2{font-size:3.1rem;line-height:1.06;max-width:24ch}
+.card .hook{font-size:1.45rem;color:#E3E7EE;margin-top:.9rem;max-width:34ch;line-height:1.35}
+.card .go{margin-top:1.4rem;display:inline-flex;align-items:center;gap:.6rem;font-weight:600;font-size:1rem;color:#fff;opacity:.85}
+.card .go i{width:2.2rem;height:2.2rem;border-radius:50%;background:var(--c);display:grid;place-items:center;transition:transform .3s}
+.card:hover .go i{transform:translateX(.3rem)}
+.card .meta{font-size:.95rem;color:var(--muted);margin-top:.6rem}
+.statchip{position:absolute!important;top:1.6rem;right:1.6rem;text-align:right;background:rgba(14,17,23,.7);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);border-radius:1rem;padding:.8rem 1.1rem;max-width:16rem}
+.statchip b{display:block;font-family:Poppins;font-size:2.2rem;line-height:1;color:var(--c)}
+.statchip span{font-size:.85rem;color:#D3D8E1}
+
+
+/* ── one-pager ── */
+.op{height:100%;display:grid;grid-template-columns:40% 1fr;gap:2.2rem}
+.op-img{position:relative;border-radius:1.6rem;overflow:hidden;background:#000 center/cover no-repeat;display:flex;flex-direction:column;justify-content:flex-end;padding:2.2rem;border:1px solid var(--line)}
+.op-img::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,17,23,0) 30%,rgba(14,17,23,.85) 72%,rgba(14,17,23,.98))}
+.op-img>*{position:relative}
+.op-img h1{font-size:2.6rem;line-height:1.06;font-weight:800;margin-top:.9rem}
+.op-date{color:var(--muted);font-size:1rem;margin-top:.7rem}
+.bigstat{margin-top:1.6rem;padding-top:1.4rem;border-top:1px solid rgba(255,255,255,.15);display:flex;align-items:baseline;gap:1rem}
+.bigstat b{font-family:Poppins;font-weight:800;font-size:3.6rem;line-height:.9;color:var(--c);white-space:nowrap}
+.bigstat span{font-size:1.05rem;color:#D3D8E1;line-height:1.3}
+.credit{position:absolute!important;top:1rem;right:1.2rem;font-size:.7rem;color:rgba(255,255,255,.55)}
+
+.op-body{display:grid;grid-template-rows:auto auto auto auto 1fr;gap:1.1rem;min-height:0;align-content:start}
+.blk h3{display:flex;align-items:center;gap:.7rem;font-size:.9rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.16em;margin-bottom:.5rem}
+.blk h3 i{width:2rem;height:2rem;border-radius:.6rem;background:color-mix(in srgb,var(--c) 22%,transparent);color:var(--c);display:grid;place-items:center;font-style:normal;font-family:Poppins;font-size:1rem;letter-spacing:0}
+.what{font-size:1.45rem;line-height:1.45;color:#F1F3F7;font-weight:500}
+.bg-list{list-style:none;display:grid;gap:.4rem}
+.bg-list li{position:relative;padding-left:1.6rem;font-size:1.15rem;line-height:1.4;color:#D9DEE6}
+.bg-list li::before{content:"";position:absolute;left:0;top:.55em;width:.65rem;height:.65rem;border-radius:50%;border:2px solid var(--c)}
+.cons{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.con{background:var(--panel);border:1px solid var(--line);border-top:.3rem solid var(--c);border-radius:1rem;padding:.85rem 1rem}
+.con b{display:block;font-size:.85rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:.35rem}
+.con p{font-size:1.1rem;line-height:1.35;color:#fff;font-weight:500}
+.isl{position:relative;background:linear-gradient(135deg,rgba(212,175,55,.18),rgba(212,175,55,.05) 60%);border:1px solid rgba(212,175,55,.4);border-left:.4rem solid var(--gold);border-radius:1.1rem;padding:1.1rem 1.4rem 1rem}
+.isl h3{display:flex;align-items:center;gap:.6rem;font-size:.9rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.16em;margin-bottom:.7rem}
+.isl h3 i{font-style:normal;width:1.9rem;height:1.9rem;border-radius:.55rem;background:rgba(212,175,55,.2);display:grid;place-items:center;font-size:1rem;letter-spacing:0}
+.isl-row{display:grid;grid-template-columns:7.2rem 1fr;gap:.9rem;align-items:baseline;margin-top:.45rem}
+.isl-row b{font-size:.8rem;text-transform:uppercase;letter-spacing:.12em;color:#E9C766}
+.isl-row p{font-size:1.18rem;line-height:1.4;color:#F6EED6}
+.isl-row.sol p{color:#fff;font-weight:600}
+.isl .ref{margin-top:.6rem;font-size:.8rem;color:rgba(233,199,102,.75);font-style:italic}
+.op-foot{align-self:end;display:flex;align-items:center;gap:1rem;color:var(--dim);font-size:.85rem}
+.op-foot .sp{flex:1}
+.dots{display:flex;gap:.5rem}
+.dots button{width:.8rem;height:.8rem;border-radius:50%;background:#2E3747;transition:all .3s}
+.dots button.on{background:var(--c);width:2.2rem;border-radius:1rem}
+
+.nav-arrow{position:fixed;top:50%;transform:translateY(-50%);z-index:25;width:3.2rem;height:3.2rem;border-radius:50%;display:grid;place-items:center;background:rgba(22,28,39,.7);border:1px solid var(--line);color:var(--muted);opacity:0;transition:opacity .3s,color .2s}
+body:hover .nav-arrow.show{opacity:.85}
+.nav-arrow:hover{color:#fff}
+.nav-arrow.l{left:.6rem}.nav-arrow.r{right:.6rem}
+.nav-arrow svg{width:1.3rem;height:1.3rem}
+
+.morph{position:fixed;z-index:50;background:#000 center/cover no-repeat;pointer-events:none;overflow:hidden}
+.morph::after{content:"";position:absolute;inset:0;background:rgba(14,17,23,.55)}
+.keys{transition:opacity .4s;position:fixed;bottom:.8rem;left:50%;transform:translateX(-50%);font-size:.75rem;color:var(--dim);z-index:20;opacity:.7}
+.keys kbd{font:inherit;border:1px solid var(--line);border-radius:.3rem;padding:0 .35rem;margin:0 .1rem}
+
+/* ── mindre skærme / mobil ── */
+@media (max-aspect-ratio:4/3),(max-width:900px){
+  html{font-size:clamp(12px,1.9vw,18px)}
+  html,body{overflow:auto}
+  .screen{position:absolute;min-height:100%;padding:4.8rem 1rem 2rem}
+  .screen.on{display:block}
+  #home.on{display:flex;flex-direction:column}
+  .h-main{display:flex;flex-direction:column;gap:1rem;flex-shrink:0}
+  .h-main .mapwrap{flex-shrink:0;width:100%}
+  .h-head{flex-direction:column;align-items:flex-start}.quote{max-width:none}.h-hint{text-align:left}
+  .h-head h1{font-size:2.6rem}
+  .mapwrap{height:auto;aspect-ratio:2/1}
+  .tiles{grid-template-columns:1fr 1fr;height:auto}
+  .tile{height:12rem}
+  .cat-grid{grid-template-columns:1fr;grid-template-rows:none;height:auto}
+  .card{min-height:15rem}.card.main{grid-row:auto;min-height:24rem}
+  .card.main h2{font-size:2.3rem}
+  .op{grid-template-columns:1fr;height:auto}
+  .op-img{min-height:24rem}
+  .cons{grid-template-columns:1fr}
+  .what{font-size:1.3rem}
+  .keys,.nav-arrow{display:none}
+  .crumbs .pill span.lbl{display:none}
+}
+
+/* ── åbning / afslutning ── */
+#intro,#outro{display:none;place-items:center;text-align:center;padding:4rem 6rem;cursor:pointer;background:radial-gradient(60% 60% at 50% 40%,rgba(31,169,113,.14),transparent 70%),var(--bg)}
+#intro.on,#intro.out,#outro.on,#outro.out{display:grid}
+#outro{cursor:default;text-align:left}
+.bism{font-family:Amiri,serif;font-size:2.4rem;color:var(--gold);direction:rtl}
+.ayah{font-family:Amiri,serif;font-size:3.4rem;line-height:1.8;direction:rtl;color:#fff;margin:1.4rem auto .6rem;max-width:58rem}
+.ayah-tr{font-size:1.45rem;color:#D9DEE6;max-width:52rem;margin:0 auto;line-height:1.5}
+.ayah-ref{font-size:.95rem;color:var(--gold);margin-top:.6rem;letter-spacing:.08em}
+.intro-title{margin-top:3rem}
+.intro-title h1{font-size:4.4rem;font-weight:800;line-height:1}
+.intro-title h1 span{background:linear-gradient(90deg,#fff 35%,#4BE3A0);-webkit-background-clip:text;background-clip:text;color:transparent}
+.intro-title p{font-size:1.2rem;color:var(--gold);letter-spacing:.24em;text-transform:uppercase;margin-top:1rem;font-weight:700}
+.start{margin-top:2.6rem;display:inline-flex;align-items:center;gap:.7rem;padding:.9rem 1.6rem;border-radius:3rem;background:var(--green);color:#fff;font-weight:700;font-size:1.1rem;animation:breathe 2.4s infinite}
+@keyframes breathe{50%{box-shadow:0 0 0 .8rem rgba(31,169,113,.15)}}
+.outro-wrap{width:100%;max-width:92rem}
+.outro-wrap .kick{justify-content:flex-start}
+.outro-wrap h1{font-size:3.4rem;font-weight:800;margin:.4rem 0 2rem}
+.pts{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem}
+.pt{background:var(--panel);border:1px solid var(--line);border-top:.35rem solid var(--green);border-radius:1.3rem;padding:1.6rem}
+.pt:nth-child(2){border-top-color:var(--gold)}.pt:nth-child(3){border-top-color:#E5484D}
+.pt b{display:block;font-family:Poppins;font-size:3rem;line-height:1;color:rgba(255,255,255,.12);margin-bottom:.6rem}
+.pt h3{font-size:1.55rem;line-height:1.2;margin-bottom:.6rem}
+.pt p{font-size:1.2rem;line-height:1.45;color:#D3D8E1}
+.outro-ayah{margin-top:2.4rem;text-align:center;padding:1.6rem;border-radius:1.3rem;background:linear-gradient(90deg,rgba(212,175,55,.06),rgba(212,175,55,.16),rgba(212,175,55,.06));border:1px solid rgba(212,175,55,.3)}
+.outro-ayah .ayah{font-size:2.6rem;margin:0 auto .3rem}
+.top.hide{opacity:0;pointer-events:none}
+.top{transition:opacity .4s}
+/* debat */
+.debate{position:absolute!important;top:1.4rem;left:1.4rem;right:1.4rem;background:rgba(14,17,23,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.14);border-left:.3rem solid var(--c);border-radius:1rem;padding:.9rem 1.1rem}
+.debate b{display:flex;align-items:center;gap:.45rem;font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;color:var(--c);margin-bottom:.3rem}
+.debate p{font-size:1.15rem;line-height:1.35;font-weight:600;color:#fff}
+.op-img .credit{top:auto;bottom:.6rem}
+.outro-btn{border-color:rgba(212,175,55,.45)!important;color:#F1D27A!important}
+@media (max-aspect-ratio:4/3),(max-width:900px){#intro,#outro{padding:5rem 1.2rem 2rem}.pts{grid-template-columns:1fr}.ayah{font-size:2.2rem}.intro-title h1{font-size:2.8rem}}
+
+/* ── afstemning ── */
+#top5{padding:5.6rem 3rem 2.4rem}
+.vt{height:100%;display:grid;grid-template-columns:30rem 1fr;gap:3rem}
+.vt-side{display:flex;flex-direction:column;justify-content:center;gap:1.3rem}
+.vt-side h1{font-size:3.3rem;font-weight:800;line-height:1.02}
+.vt-side p{font-size:1.25rem;line-height:1.45;color:#C9CED8}
+.vt-qr{display:flex;align-items:center;gap:1.1rem;margin-top:.6rem}
+.vt-qr .qr{width:13rem;height:13rem;flex:none;background:#fff;border-radius:.9rem;padding:.55rem}
+.vt-qr .qr svg{width:100%;height:100%;display:block}
+.vt-qr b{display:block;font-size:1.15rem;color:#fff;margin-bottom:.2rem}.vt-qr span{color:#A9B1BE;font-size:.95rem}
+.vt-total{display:flex;align-items:center;gap:.6rem;color:#A9B1BE;font-size:1rem;padding-top:1rem;border-top:1px solid var(--line)}
+.vt-total b{font:800 1.8rem Poppins;color:#fff}
+.vt-reset{margin-left:auto;background:none;border:1px solid var(--line);color:#A9B1BE;border-radius:2rem;padding:.4rem .9rem;font:inherit;font-size:.85rem;cursor:pointer}
+.vt-reset:disabled{opacity:.35;cursor:default}
+.vt-list{display:grid;grid-template-rows:repeat(5,1fr);gap:.9rem;min-height:0}
+.vt-row{display:flex;align-items:stretch;gap:1rem;background:var(--panel);border:1px solid var(--line);border-radius:1.2rem;overflow:hidden;min-height:0;transition:border-color .3s,box-shadow .3s}
+.vt-row.lead{border-color:var(--c);box-shadow:0 0 0 1px var(--c),0 .8rem 2rem rgba(0,0,0,.35)}
+.vt-main{flex:1;min-width:0;display:flex;align-items:stretch;gap:1.2rem;background:none;border:0;color:#fff;text-align:left;padding:0;cursor:pointer;font:inherit}
+.vt-main .im{width:9.5rem;flex:none;background-size:cover;background-position:center;position:relative}
+.vt-main .im i{position:absolute;inset:0;display:grid;place-items:center;font:800 2.6rem Poppins;font-style:normal;background:rgba(14,17,23,.45)}
+.vt-main .tx{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:.4rem;padding:.6rem 0}
+.vt-main .ct{font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--c)}
+.vt-main h3{font-size:1.4rem;line-height:1.15}
+.vt-main p{font-size:1rem;color:#A9B1BE;line-height:1.35}
+.vt-main .go{width:3.5rem;flex:none;display:grid;place-items:center;font-size:2rem;color:rgba(255,255,255,.35);transition:color .2s,transform .2s}
+.vt-row:hover{border-color:var(--c)}.vt-row:hover .go{color:var(--c);transform:translateX(.2rem)}
+.vt-open{align-self:flex-start;display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.3rem;border-radius:2rem;background:var(--green);color:#fff;font-weight:700;text-decoration:none;font-size:1rem}
+.vt-open:hover{filter:brightness(1.1)}
+.vt-main .bar{height:.75rem;border-radius:1rem;background:rgba(255,255,255,.07);overflow:hidden;margin-top:.2rem}
+.vt-main .bar span{display:block;height:100%;border-radius:1rem;background:var(--c);transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.vt-num{width:5.5rem;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.vt-num b{font:800 2.4rem/1 Poppins;color:var(--c)}.vt-num small{color:#8B93A1;font-size:.85rem;margin-top:.2rem}
+.vt-ctl{display:flex;flex-direction:column;border-left:1px solid var(--line)}
+.vt-ctl button{flex:1;width:4.2rem;background:none;border:0;color:#fff;font:700 1.8rem Inter;cursor:pointer;transition:background .2s}
+.vt-ctl button:first-child{background:rgba(31,169,113,.16);color:#4BE3A0}
+.vt-ctl button:hover:not(:disabled){background:rgba(255,255,255,.1)}
+.vt-ctl button:disabled{opacity:.25;cursor:default}
+.top5-btn{border-color:rgba(31,169,113,.5)!important;color:#7FF0BE!important}
+@media (max-width:700px){
+  #top5{padding:4.6rem 1rem 1.6rem}
+  .vt{height:auto;display:flex;flex-direction:column;gap:1.2rem}
+  .vt-side h1{font-size:2rem}.vt-side p{font-size:1rem}
+  .vt-qr{display:none}.vt-main p{display:none}
+  .vt-list{display:flex;flex-direction:column;gap:.7rem}
+  .vt-row{min-height:6.5rem}.vt-main .im{width:5.5rem}.vt-main h3{font-size:1rem}.vt-num{width:3.6rem}.vt-num b{font-size:1.6rem}
+}
+
+
+/* ── pauseskærm ── */
+#pause{position:fixed;inset:0;z-index:90;background:#0E1117;opacity:0;pointer-events:none;transition:opacity .9s ease;cursor:pointer}
+#pause.on{opacity:1;pointer-events:auto}
+.ps-slide{position:absolute;inset:0;opacity:0;transition:opacity 1.2s ease}
+.ps-slide.on{opacity:1}
+.ps-slide .bg{position:absolute;inset:0;background:center/cover no-repeat}
+.ps-slide .sh{position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,17,23,.97) 0%,rgba(14,17,23,.88) 45%,rgba(14,17,23,.35) 100%)}
+.ps-top{position:absolute;top:3rem;left:4.2rem;right:4.2rem;display:flex;justify-content:space-between;align-items:center;z-index:2}
+.ps-kick{display:flex;align-items:center;gap:.7rem;font-size:.95rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--pc)}
+.ps-kick::before{content:"";width:.65rem;height:.65rem;border-radius:50%;background:var(--pc)}
+.ps-month{color:#A9B1BE;font-size:.95rem}
+.ps-body{position:absolute;left:4.2rem;top:50%;transform:translateY(-50%);width:58%;display:flex;flex-direction:column;gap:2rem;z-index:2}
+.ps-stat{display:flex;align-items:baseline;gap:1.1rem}
+.ps-stat b{font:800 5.6rem/1 Poppins;color:var(--pc)}
+.ps-stat span{font-size:1.45rem;color:#D9DEE6;max-width:24rem;line-height:1.3}
+.ps-q{font:800 4rem/1.08 Poppins;color:#fff}
+.ps-cta{font-size:1.35rem;color:#C9CED8}
+.ps-foot{position:absolute;left:4.2rem;right:4.2rem;bottom:3.2rem;display:flex;justify-content:space-between;align-items:center;z-index:2;color:#8B93A1;font-size:.95rem}
+.ps-dots{display:flex;gap:.5rem;align-items:center}
+.ps-dots i{width:1.1rem;height:.42rem;border-radius:1rem;background:rgba(255,255,255,.22);overflow:hidden;position:relative;transition:width .4s}
+.ps-dots i.on{width:3.4rem}
+.ps-dots i.on::after{content:"";position:absolute;inset:0;background:#D4AF37;transform-origin:left;animation:psbar var(--pd) linear forwards}
+@keyframes psbar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* ── mini-kort: involverede lande ── */
+.mm{position:absolute!important;right:1.4rem;top:9.6rem;width:46%;background:rgba(14,17,23,.74);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.14);border-radius:1rem;padding:.7rem .8rem .75rem}
+.mm b{display:block;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--c);margin-bottom:.35rem}
+.mm svg{display:block;width:100%;height:auto}
+.mm svg .c{fill:#2A3242;stroke:#0E1117;stroke-width:.4;transition:none}
+.mm svg .c.act{fill:var(--c)}
+.mm svg .c.part{fill:color-mix(in srgb,var(--c) 38%,#2A3242)}
+.mm svg .pin{fill:var(--c);stroke:#fff;stroke-width:2.2}
+.mm svg .pr{fill:none;stroke:var(--c);stroke-width:2.5;animation:mmp 2s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes mmp{from{transform:scale(1);opacity:.9}to{transform:scale(3.2);opacity:0}}
+.mm .mm-l{margin-top:.4rem;font-size:.82rem;color:#E3E7EE;line-height:1.35}
+@media (max-aspect-ratio:4/3),(max-width:900px){.mm{position:relative!important;right:auto;top:auto;width:auto;margin:1rem 0}}
+
+/* ── flag ── */
+.flag{display:inline-block;width:1.25em;height:.9em;vertical-align:-.08em;border-radius:.15em;box-shadow:0 0 0 1px rgba(255,255,255,.25)}
+.t-ic .flag{width:1.7rem;height:1.2rem}
+.first-badge{align-self:flex-start;margin-bottom:.55rem;padding:.3rem .7rem;border-radius:2rem;background:#D4AF37;color:#0E1117;font-size:.7rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <button class="brand" data-home aria-label="Til forsiden"><i><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></i><span>Verdensoverblik<small id="month"></small></span></button>
+  <nav class="crumbs" id="crumbs"></nav>
+  <span class="sp"></span>
+  <button class="pill top5-btn" id="top5Btn" data-top5>Afstemning</button>
+  <button class="pill outro-btn" id="outroBtn" data-outro>Månedens hovedpointer ›</button>
+  <button class="ibtn" id="fs" title="Fuld skærm (F)" aria-label="Fuld skærm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+</header>
+
+<section class="screen" id="intro" aria-label="Åbning" data-gohome>
+  <div>
+    <div class="bism">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+    <div class="ayah" id="i-ayah"></div>
+    <div class="ayah-tr" id="i-tr"></div>
+    <div class="ayah-ref" id="i-ref"></div>
+    <div class="intro-title"><h1><span>Månedens Verdensoverblik</span></h1><p id="i-month"></p></div>
+    <span class="start">Start overblikket <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+  </div>
+</section>
+<section class="screen" id="outro" aria-label="Afrunding"></section>
+<section class="screen" id="home" aria-label="Forside">
+  <div class="h-main">
+  <div class="h-head">
+    <div><div class="kick" id="kick"></div><h1><span>Månedens<br>Verdensoverblik</span></h1></div>
+    <figure class="quote"><div class="q-k">Hvorfor følger vi politik?</div>
+      <div class="q-row no"><span>✕</span><p><b>Ikke</b> som journalisten – bare for at være opdateret.</p></div>
+      <div class="q-row yes"><span>✓</span><p><b>Men</b> for at se begivenhederne ud fra islam – og tage stilling til dem.</p></div>
+      <blockquote>„…for at anskue disse begivenheder ud fra den særlige vinkel for at nedfælde den dom over dem, som man kommer frem til.“</blockquote>
+      <figcaption>Hizb Ut Tahrirs Politiske Opfattelser, s. 314</figcaption></figure>
+  </div>
+  <div class="mapwrap" id="mapwrap">{{MAP}}</div>
+  </div>
+  <div class="tiles" id="tiles"></div>
+</section>
+<section class="screen" id="top5" aria-label="Månedens Top 5"></section>
+<section class="screen" id="cat" aria-label="Kategori"></section>
+<section class="screen" id="story" aria-label="Sag"></section>
+
+<div id="pause" aria-hidden="true" title="Klik for at fortsætte"></div>
+
+<button class="nav-arrow l" id="prev" aria-label="Forrige"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></button>
+<button class="nav-arrow r" id="next" aria-label="Næste"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+<div class="keys" id="keys"><kbd>←</kbd><kbd>→</kbd> bladr · <kbd>Esc</kbd> tilbage · <kbd>1–6</kbd> kategori · <kbd>F</kbd> fuld skærm · <kbd>P</kbd> pauseskærm</div>
+
+<script src="data.js"></script>
+<script>
+(function(){
+const D = window.VO;
+const FLAG = {
+  dk:'<svg class="flag" viewBox="0 0 37 28" aria-hidden="true"><rect width="37" height="28" fill="#C8102E"/><rect x="12" width="4" height="28" fill="#fff"/><rect y="12" width="37" height="4" fill="#fff"/></svg>',
+  us:'<svg class="flag" viewBox="0 0 38 20" aria-hidden="true"><rect width="38" height="20" fill="#B22234"/><g fill="#fff"><rect y="1.54" width="38" height="1.54"/><rect y="4.62" width="38" height="1.54"/><rect y="7.69" width="38" height="1.54"/><rect y="10.77" width="38" height="1.54"/><rect y="13.85" width="38" height="1.54"/><rect y="16.92" width="38" height="1.54"/></g><rect width="15.2" height="10.77" fill="#3C3B6E"/><g fill="#fff"><circle cx="2.5" cy="2" r=".7"/><circle cx="5.5" cy="2" r=".7"/><circle cx="8.5" cy="2" r=".7"/><circle cx="11.5" cy="2" r=".7"/><circle cx="4" cy="4.1" r=".7"/><circle cx="7" cy="4.1" r=".7"/><circle cx="10" cy="4.1" r=".7"/><circle cx="13" cy="4.1" r=".7"/><circle cx="2.5" cy="6.2" r=".7"/><circle cx="5.5" cy="6.2" r=".7"/><circle cx="8.5" cy="6.2" r=".7"/><circle cx="11.5" cy="6.2" r=".7"/><circle cx="4" cy="8.3" r=".7"/><circle cx="7" cy="8.3" r=".7"/><circle cx="10" cy="8.3" r=".7"/><circle cx="13" cy="8.3" r=".7"/></g></svg>',
+  cn:'<svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="20" fill="#DE2910"/><g fill="#FFDE00"><polygon points="5,2 6.18,5.62 9.98,5.62 6.9,7.85 8.08,11.47 5,9.24 1.92,11.47 3.1,7.85 0.02,5.62 3.82,5.62"/><circle cx="10" cy="2" r=".9"/><circle cx="12" cy="4" r=".9"/><circle cx="12" cy="7" r=".9"/><circle cx="10" cy="9" r=".9"/></g></svg>'
+};
+const CATS = [
+  {id:"lokalt",name:"Lokalt",sub:"Nordsjælland",ic:"📍",c:"#1FA971"},
+  {id:"danmark",name:"Danmark",sub:"Indland",ic:FLAG.dk,c:"#E5484D"},
+  {id:"globalt",name:"Globalt",sub:"Verden",ic:"🌍",c:"#5B8DEF"},
+  {id:"mellemosten",name:"Mellemøsten",sub:"Region",ic:"🌐",c:"#D4AF37"},
+  {id:"usa",name:"USA",sub:"Supermagt",ic:FLAG.us,c:"#7C6CF2"},
+  {id:"kina",name:"Kina",sub:"Supermagt",ic:FLAG.cn,c:"#F2683C"}
+];
+
+/* forsidens rækkefølge: den varmeste kategori først (fra top5 eller D.catOrder) */
+(function(){
+  const want = (D.catOrder && D.catOrder.length) ? D.catOrder.slice()
+    : (D.top5||[]).map(x=>{const s=D.stories.find(y=>y.id===x.id); return s&&s.cat;}).filter(Boolean);
+  const seen=[]; want.forEach(c=>{ if(!seen.includes(c)) seen.push(c); });
+  const rank = id => { const i=seen.indexOf(id); return i<0 ? 100+["lokalt","danmark","globalt","mellemosten","usa","kina"].indexOf(id) : i; };
+  CATS.sort((a,b)=>rank(a.id)-rank(b.id));
+})();
+const MARKERS = {{MARKERS}};
+const VB = [40,28,920,392];
+const catBy = Object.fromEntries(CATS.map(c=>[c.id,c]));
+const byId = Object.fromEntries(D.stories.map(s=>[s.id,s]));
+const inCat = id => D.stories.filter(s=>s.cat===id).sort((a,b)=>(b.main?1:0)-(a.main?1:0));
+const mainOf = id => inCat(id)[0];
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const img = f => `img/${f}`;
+const sm = f => `img/sm/${f}`;
+const ARROW = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0E1117" stroke-width="2.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+
+$("#month").textContent = D.month;
+$("#kick").textContent = D.period;
+$("#i-ayah").textContent = D.intro.ayah; $("#i-tr").textContent = "“"+D.intro.tr+"”"; $("#i-ref").textContent = D.intro.ref;
+$("#i-month").textContent = D.month;
+function renderOutro(){
+  const o = D.outro;
+  $("#outro").innerHTML = `<div class="outro-wrap"><div class="kick">${D.month} · Afrunding</div><h1>Månedens hovedpointer</h1>
+    <div class="pts">${o.points.map((p,i)=>`<div class="pt"><b>0${i+1}</b><h3>${esc(p.t)}</h3><p>${esc(p.d)}</p></div>`).join("")}</div>
+    <div class="outro-ayah"><div class="ayah">${o.ayah}</div><div class="ayah-tr">“${esc(o.tr)}”</div><div class="ayah-ref">${esc(o.ref)}</div></div></div>`;
+}
+
+/* forhåndsindlæs billeder */
+D.stories.forEach(s=>{const i=new Image();i.src=sm(s.img)});
+/* HD-billeder hentes ét ad gangen i baggrunden, når forsiden står klar */
+setTimeout(()=>{ const q=D.stories.map(s=>img(s.img)); (function nxt(){ const u=q.shift(); if(!u) return; const i=new Image(); i.onload=i.onerror=()=>setTimeout(nxt,150); i.src=u; })(); }, 1500);
+
+/* ── forside ── */
+function buildHome(){
+  $("#tiles").innerHTML = CATS.map((c,i)=>{const m=mainOf(c.id);return `
+    <button class="tile" style="--c:${c.c};background-image:url('${sm(m.img)}')" data-go="${c.id}" data-tile="${c.id}">
+      <span class="t-ic">${c.ic}</span>
+      ${i===0?'<span class="first-badge">Månedens vigtigste</span>':""}
+      <span class="t-name">${c.name}</span>
+      <span class="t-hook">${esc(m.title)}</span>
+    </button>`}).join("");
+  // markører
+  const svg = $("#mapwrap svg");
+  const FL = {danmark:["#C8102E","dk"],usa:["#B22234","us"],kina:["#DE2910","cn"]};
+  const lab = {lokalt:{dx:12,dy:-20,txt:"📍 Nordsjælland"},danmark:{dx:-112,dy:16,txt:"Danmark",fl:"dk"},mellemosten:{dx:12,dy:-4,txt:"🌐 Mellemøsten"},usa:{dx:12,dy:-4,txt:"USA",fl:"us"},kina:{dx:12,dy:-4,txt:"Kina",fl:"cn"},globalt:{dx:12,dy:-4,txt:"🌍 Globalt"}};
+  let g = "";
+  CATS.forEach(c=>{const [x,y]=MARKERS[c.id], L=lab[c.id], fw=L.fl?17:0, w=L.txt.length*(L.fl?8.4:7.6)+20+fw;
+    const flag = L.fl ? FLAG[L.fl].replace('<svg class="flag"',`<svg class="mflag" x="${x+L.dx+9}" y="${y+L.dy-5.5}" width="13" height="10" preserveAspectRatio="none"`) : "";
+    g += `<g class="mk" data-go="${c.id}" data-mk="${c.id}" style="--mc:${c.c}" tabindex="0" role="button" aria-label="${c.name}">
+      <circle class="ring" cx="${x}" cy="${y}" r="6"/><circle class="dot" cx="${x}" cy="${y}" r="4"/>
+      <rect x="${x+L.dx}" y="${y+L.dy-12}" width="${w}" height="24" rx="12"/>${flag}
+      <text x="${x+L.dx+10+fw}" y="${y+L.dy+5}">${L.txt}</text></g>`});
+  svg.insertAdjacentHTML("beforeend", g);
+  // hover-kobling mellem kort, regioner og fliser
+  const hl = (r,on)=>{ document.querySelectorAll(`.r-${r==="lokalt"?"danmark":r}`).forEach(p=>p.classList.toggle("hl",on)); const t=document.querySelector(`[data-tile="${r}"]`); t&&t.classList.toggle("hl",on); };
+  document.querySelectorAll("#mapwrap .c, #mapwrap .mk, .tile").forEach(el=>{
+    const r = el.dataset.r||el.dataset.mk||el.dataset.tile;
+    el.addEventListener("mouseenter",()=>hl(r,true)); el.addEventListener("mouseleave",()=>hl(r,false));
+  });
+}
+
+
+/* ── afstemning (top 5) ── */
+const QR = `{{QR}}`;
+const RESULTS = "https://docs.google.com/forms/d/13J7Z5T9QSmYYfFvane2ZXcay0qE4MM-afbVHLj9dsfI/edit#responses";
+const FORM = "https://docs.google.com/forms/d/e/1FAIpQLScQMwAxSvEjWAJE8YH-GmKrT8nGCVA4UsotEav_wu5ii-8sVg/viewform";
+function renderTop5(){
+  const L = D.top5.map((t,i)=>({...t, s:byId[t.id], n:i+1}));
+  $("#top5").innerHTML = `<div class="vt">
+    <div class="vt-side">
+      <div class="kick">${esc(D.month)} · Afstemning</div>
+      <h1>Hvad skal vi tale om først?</h1>
+      <p>Scan koden med telefonens kamera og stem på den sag, du helst vil drøfte. Det er anonymt.</p>
+      <div class="vt-qr"><span class="qr">${QR}</span>
+        <span><b>Scan og stem</b>Åbner afstemningen i Google Formularer</span></div>
+      <a class="vt-open" href="${RESULTS}" target="_blank" rel="noopener">Se svarene ↗</a>
+    </div>
+    <div class="vt-list">${L.map(r=>{const c=catBy[r.s.cat];return `
+      <div class="vt-row" style="--c:${c.c}">
+        <button class="vt-main" data-open="${r.s.id}">
+          <span class="im" style="background-image:url('${sm(r.s.img)}')"><i>${r.n}</i></span>
+          <span class="tx"><span class="ct">${c.name}</span><h3>${esc(r.s.title)}</h3><p>${esc(r.why)}</p></span>
+          <span class="go">›</span>
+        </button>
+      </div>`}).join("")}</div>
+  </div>`;
+}
+
+/* ── kategori ── */
+function renderCat(id){
+  const c = catBy[id], [m,...rest] = inCat(id);
+  document.documentElement.style.setProperty("--c", c.c);
+  $("#cat").innerHTML = `<div class="cat-grid" style="--c:${c.c}">
+    <button class="card main" style="background-image:url('${img(m.img)}')" data-open="${m.id}">
+      <div class="statchip"><b>${esc(m.stat.v)}</b><span>${esc(m.stat.l)}</span></div>
+      <span class="tag">${c.ic} ${c.name} · Månedens hovedsag</span>
+      <h2>${esc(m.title)}</h2>
+      ${m.hook?`<p class="hook">${esc(m.hook)}</p>`:""}
+      <span class="go"><i>${ARROW}</i>Åbn overblik</span>
+    </button>
+    ${rest.map(s=>`<button class="card" style="background-image:url('${sm(s.img)}')" data-open="${s.id}">
+      <span class="tag ghost">${esc(s.date)}</span>
+      <h2>${esc(s.title)}</h2>
+      <span class="go"><i>${ARROW}</i>Åbn</span>
+    </button>`).join("")}
+  </div>`;
+}
+
+/* ── one-pager ── */
+/* mini-kort med involverede lande */
+const PINS = {{PINS}};
+const LAND = {"208":"Danmark","364":"Iran","804":"Ukraine","643":"Rusland","840":"USA","784":"Emiraterne","004":"Afghanistan","792":"Tyrkiet","634":"Qatar","376":"Israel","275":"Palæstina","156":"Kina"};
+function miniMap(s){
+  if(!s.actors||!s.actors.length) return "";
+  const src = $("#mapwrap svg"); if(!src) return "";
+  const paths = [...src.querySelectorAll("path.c")].map(p=>{
+    const iso=p.dataset.iso, on=s.actors.includes(iso), all=s.actors.includes("*");
+    return `<path class="c${on?" act":(all?" part":"")}" data-iso="${iso}" d="${p.getAttribute("d")}"/>`;
+  }).join("");
+  return `<div class="mm"><b>Involverede lande</b>
+    <svg viewBox="40 28 920 392" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Kort over involverede lande: ${esc(s.actorNote||s.actors.filter(a=>a!=="*").map(a=>LAND[a]||a).join(", "))}">${paths}<g class="pins"></g></svg>
+    <div class="mm-l">${esc(s.actorNote||s.actors.filter(a=>a!=="*").map(a=>LAND[a]||a).join(" · "))}</div></div>`;
+}
+function placePins(){
+  const svg = document.querySelector("#story .mm svg"); if(!svg) return;
+  const s = byId[cur.id]; if(!s||!s.actors) return;
+  svg.querySelector(".pins").innerHTML = s.actors.filter(a=>PINS[a]).map(a=>{const [x,y]=PINS[a];
+    return `<circle class="pr" cx="${x}" cy="${y}" r="7"/><circle class="pin" cx="${x}" cy="${y}" r="6"/>`}).join("");
+}
+
+
+function renderStory(id){
+  const s = byId[id], c = catBy[s.cat], list = inCat(s.cat), idx = list.indexOf(s);
+  document.documentElement.style.setProperty("--c", c.c);
+  $("#story").innerHTML = `<div class="op" style="--c:${c.c}">
+    <div class="op-img" style="background-image:url('${img(s.img)}')">
+      <span class="credit">Foto: Unsplash</span>
+      ${s.debate?`<div class="debate"><b>💬 Til debat</b><p>${esc(s.debate)}</p></div>`:""}
+      ${miniMap(s)}
+      <span class="tag">${c.ic} ${c.name}</span>
+      <h1>${esc(s.title)}</h1>
+      <div class="op-date">${esc(s.date)} 2026</div>
+      <div class="bigstat"><b>${esc(s.stat.v)}</b><span>${esc(s.stat.l)}</span></div>
+    </div>
+    <div class="op-body">
+      <div class="blk"><h3><i>1</i>Hvad skete der?</h3><p class="what">${esc(s.what)}</p></div>
+      <div class="blk"><h3><i>2</i>Baggrund</h3><ul class="bg-list">${s.background.map(b=>`<li>${esc(b)}</li>`).join("")}</ul></div>
+      <div class="blk"><h3><i>3</i>Konsekvenser</h3><div class="cons">${s.consequences.map(k=>`<div class="con"><b>${esc(k.k)}</b><p>${esc(k.t)}</p></div>`).join("")}</div></div>
+      <div class="isl"><h3><i>4</i>Islamisk syn</h3>
+        <div class="isl-row"><b>Problemet</b><p>${esc(s.islam.problem)}</p></div>
+        <div class="isl-row sol"><b>Løsningen</b><p>${esc(s.islam.solution)}</p></div>
+        <div class="ref">${esc(s.islam.ref)}</div></div>
+      <div class="op-foot"><span>Kilder: ${esc(s.source)}</span><span class="sp"></span>
+        <div class="dots">${list.map((x,i)=>`<button class="${i===idx?"on":""}" data-open="${x.id}" aria-label="${esc(x.title)}"></button>`).join("")}</div></div>
+    </div>
+  </div>`;
+}
+
+/* ── navigation ── */
+let cur = {view:"home", id:null}; let cameFromTop5 = false;
+function crumbs(){
+  let h = "";
+  if(cur.view==="top5"||cur.view==="outro") h += `<button class="pill" data-home><span>‹</span><span class="lbl">Overblik</span></button>`;
+  if(cur.view==="story" && cameFromTop5) h += `<button class="pill top5-btn" data-top5>‹ Afstemning</button>`;
+  if(cur.view==="cat"||cur.view==="story"){
+    const c = catBy[cur.view==="cat"?cur.id:byId[cur.id].cat];
+    h += `<button class="pill" data-home><span>‹</span><span class="lbl">Overblik</span></button>`;
+    h += `<button class="pill c" style="--c:${c.c}" data-go="${c.id}">${c.ic} ${c.name}</button>`;
+  }
+  $("#crumbs").innerHTML = h;
+  const arrows = cur.view==="cat"||cur.view==="story";
+  $("#prev").classList.toggle("show",arrows); $("#next").classList.toggle("show",arrows);
+}
+function show(view, id){
+  if(view!=="story") cameFromTop5 = (view==="top5") ? true : (view==="home"||view==="cat"||view==="intro"||view==="outro") ? false : cameFromTop5;
+  const target = {top5:"#top5",home:"#home",cat:"#cat",story:"#story",intro:"#intro",outro:"#outro"}[view];
+  if(view==="outro") renderOutro();
+  if(view==="top5") renderTop5();
+  if(view==="cat") renderCat(id);
+  if(view==="story"){ renderStory(id); requestAnimationFrame(placePins); }
+  if(view==="home"||view==="intro"||view==="outro"||view==="top5") document.documentElement.style.setProperty("--c","#1FA971");
+  $(".top").classList.toggle("hide", view==="intro");
+  $("#outroBtn").style.display = view==="home"?"":"none";
+  $("#top5Btn").style.display = view==="home"?"":"none";
+  document.querySelectorAll(".screen").forEach(s=>{
+    if(s.matches(target)){ s.classList.remove("out"); s.classList.remove("on"); void s.offsetWidth; s.classList.add("on"); }
+    else if(s.classList.contains("on")){ s.classList.remove("on"); s.classList.add("out"); setTimeout(()=>s.classList.remove("out"),300); }
+  });
+  $("#mapwrap").classList.remove("zoom"); $("#mapwrap svg").style.transform="";
+  cur = {view,id}; crumbs(); $("#keys").style.opacity = view==="home"?.7:0;
+}
+function route(){
+  const h = decodeURIComponent((location.hash||"").slice(1));
+  if(catBy[h]) show("cat",h); else if(byId[h]) show("story",h);
+  else if(h==="afstemning"||h==="top5") show("top5",null);
+  else if(h==="overblik") show("home",null); else if(h==="afslutning") show("outro",null);
+  else if(innerWidth<=700) show("top5",null); else show("intro",null);
+}
+function go(h){ if(location.hash==="#"+h) route(); else location.hash = h; }
+
+/* udvid-animation fra kort/flise */
+function expand(el, bgImg, then){
+  const r = el.getBoundingClientRect();
+  const m = document.createElement("div"); m.className="morph";
+  m.style.cssText = `left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;border-radius:1.4rem;background-image:url('${bgImg}')`;
+  document.body.appendChild(m);
+  m.animate([{left:r.left+"px",top:r.top+"px",width:r.width+"px",height:r.height+"px",borderRadius:"22px"},
+             {left:"0px",top:"0px",width:innerWidth+"px",height:innerHeight+"px",borderRadius:"0px"}],
+            {duration:560,easing:"cubic-bezier(.7,0,.2,1)",fill:"forwards"}).onfinish=()=>{
+    then(); m.animate([{opacity:1},{opacity:0}],{duration:380,fill:"forwards"}).onfinish=()=>m.remove();
+  };
+}
+/* zoom ind på kortet */
+function zoomTo(id, then){
+  const svg = $("#mapwrap svg"), [x,y] = MARKERS[id];
+  svg.style.transformOrigin = `${(x-VB[0])/VB[2]*100}% ${(y-VB[1])/VB[3]*100}%`;
+  svg.style.transform = "scale(3.2)";
+  setTimeout(()=>{ $("#mapwrap").classList.add("zoom"); },350);
+  setTimeout(then,620);
+}
+
+function step(dir){
+  if(cur.view==="intro"){ if(dir>0) go("overblik"); return; }
+  if(cur.view==="home"){ go(dir>0?"afslutning":"start"); return; }
+  if(cur.view==="top5"){ return; }
+  if(cur.view==="outro"){ if(dir<0) go("overblik"); return; }
+  if(cur.view==="cat"){ const i=CATS.findIndex(c=>c.id===cur.id); go(CATS[(i+dir+CATS.length)%CATS.length].id); }
+  else if(cur.view==="story"){
+    const s=byId[cur.id], list=inCat(s.cat), i=list.indexOf(s);
+    if(i+dir>=0 && i+dir<list.length) go(list[i+dir].id);
+    else { const ci=CATS.findIndex(c=>c.id===s.cat); const nc=CATS[(ci+dir+CATS.length)%CATS.length]; const nl=inCat(nc.id); go((dir>0?nl[0]:nl[nl.length-1]).id); }
+  }
+}
+function back(){ if(cur.view==="story" && cameFromTop5) go("afstemning"); else if(cur.view==="story") go(byId[cur.id].cat); else if(cur.view==="top5") go("overblik"); else if(cur.view==="cat"||cur.view==="outro") go("overblik"); else if(cur.view==="home") go("start"); }
+
+document.addEventListener("click", e=>{
+  if(e.target.closest("[data-home]")){ go("overblik"); return; }
+  if(e.target.closest("[data-outro]")){ go("afslutning"); return; }
+  if(e.target.closest("[data-top5]")){ go("afstemning"); return; }
+  if(e.target.closest("[data-gohome]")){ go("overblik"); return; }
+  const g = e.target.closest("[data-go]");
+  if(g){ const id=g.dataset.go;
+    if(g.classList.contains("tile")) expand(g, img(mainOf(id).img), ()=>go(id));
+    else if(g.closest("#mapwrap")) zoomTo(id, ()=>go(id));
+    else go(id);
+    return; }
+  const c = e.target.closest("#mapwrap .c");
+  if(c){ const r=c.dataset.r; zoomTo(r, ()=>go(r)); return; }
+  const o = e.target.closest("[data-open]");
+  if(o){ const s=byId[o.dataset.open]; if(o.classList.contains("card")) expand(o, img(s.img), ()=>go(s.id)); else go(s.id); return; }
+});
+$("#prev").onclick = ()=>step(-1); $("#next").onclick = ()=>step(1);
+function fullscreen(){ try{ if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{}); else document.exitFullscreen(); }catch(e){} }
+$("#fs").onclick = fullscreen;
+document.addEventListener("keydown", e=>{
+  if(e.target.matches("input,textarea")) return;
+  if(e.key==="ArrowRight"||e.key==="PageDown"){ e.preventDefault(); step(1); }
+  else if(e.key==="ArrowLeft"||e.key==="PageUp"){ e.preventDefault(); step(-1); }
+  else if(e.key==="Escape"||e.key==="Backspace"){ back(); }
+  else if(e.key==="Home"||e.key==="0"){ go("overblik"); }
+  else if(/^[1-6]$/.test(e.key)){ go(CATS[+e.key-1].id); }
+  else if(e.key==="f"||e.key==="F"){ fullscreen(); }
+  else if((e.key==="Enter"||e.key===" ") && e.target.matches(".mk")){ e.preventDefault(); go(e.target.dataset.go); }
+});
+window.addEventListener("hashchange", route);
+/* ── pauseskærm: månedens skarpeste spørgsmål, når siden står stille ── */
+const PS_IDLE = 45000, PS_SLIDE = 12000;
+let psIdleT = null, psRotT = null, psIdx = 0, psOn = false;
+const PS = (D.pause||[]).map(p=>({...p, s:byId[p.id]})).filter(p=>p.s);
+function psBuild(){
+  $("#pause").innerHTML = PS.map((p,i)=>{const c=catBy[p.s.cat];return `
+    <div class="ps-slide" style="--pc:${c.c}">
+      <div class="bg" style="background-image:url('${img(p.s.img)}')"></div><div class="sh"></div>
+      <div class="ps-top"><span class="ps-kick">Til eftertanke · ${c.name}</span><span class="ps-month">${esc(D.month)}</span></div>
+      <div class="ps-body">
+        <div class="ps-stat"><b>${esc(p.s.stat.v)}</b><span>${esc(p.s.stat.l)}</span></div>
+        <div class="ps-q">${esc(p.q)}</div>
+        <div class="ps-cta">Har du et svar – eller et spørgsmål? Sig det højt.</div>
+      </div>
+      <div class="ps-foot"><span class="ps-dots">${PS.map(()=>"<i></i>").join("")}</span><span>Klik hvor som helst for at fortsætte</span></div>
+    </div>`}).join("");
+}
+function psShow(i){
+  psIdx = (i+PS.length)%PS.length;
+  document.querySelectorAll("#pause .ps-slide").forEach((s,k)=>{
+    s.classList.toggle("on",k===psIdx);
+    s.querySelectorAll(".ps-dots i").forEach((d,j)=>{ d.classList.remove("on"); if(j===psIdx){ void d.offsetWidth; d.style.setProperty("--pd",PS_SLIDE+"ms"); d.classList.add("on"); } });
+  });
+}
+function psStart(){
+  if(psOn || !PS.length || innerWidth<=700 || cur.view==="intro" || cur.view==="top5") return;
+  psOn = true; $("#pause").classList.add("on"); psShow(psIdx);
+  psRotT = setInterval(()=>psShow(psIdx+1), PS_SLIDE);
+}
+function psStop(){
+  if(!psOn) return false;
+  psOn = false; clearInterval(psRotT); $("#pause").classList.remove("on"); psIdx = (psIdx+1)%PS.length;
+  return true;
+}
+function psKick(){ /* automatisk visning slået fra – kun P viser pauseskærmen */ }
+psBuild();
+$("#pause").addEventListener("click", e=>{ e.stopPropagation(); psStop(); psKick(); });
+["mousemove","mousedown","touchstart","wheel"].forEach(ev=>document.addEventListener(ev, ()=>{ if(!psOn) psKick(); }, {passive:true}));
+document.addEventListener("keydown", e=>{
+  if(psOn){ e.preventDefault(); e.stopImmediatePropagation(); psStop(); psKick(); return; }
+  if(e.key==="p"||e.key==="P"){ clearTimeout(psIdleT); psStart(); e.stopImmediatePropagation(); return; }
+  psKick();
+}, true);
+psKick();
+
+buildHome(); route();
+})();
+</script>
+</body>
+</html>
